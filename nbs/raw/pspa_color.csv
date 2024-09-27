@@ -1,0 +1,33 @@
+﻿Label,Color
+Non-canonical (WEE),#92001C
+FGF and VEGF receptors,#FF9966
+JAK,#ABAB0D
+EGF receptors,#FF9900
+SYK and FAK,#D0B7A0
+PDGF receptors,#BB2C05
+Insulin and neurotrophin receptors,#D46E22
+TEC,#FFCE85
+ABL,#FF6600
+TAM receptors,#EEE28A
+SRC,#FFCC00
+ACK,#DB866F
+Discoidin domain receptors,#808080
+Ephrin receptors,#FFFF00
+assorted,#99FFCC
+NEK/ASK,#FFCCCC
+MAP3K,#99CCFF
+RIPK/WNK,#F2FF93
+NAK,#339966
+ALPHA/MLK,#BE708A
+LKB/CAMKK,#00FFFF
+MAP4K,#C9F0FF
+pro-directed,#009900
+acidophilic,#FF3399
+CMGC,#808000
+Non-canonical (PDHK),#CCCCFF
+basophilic,#0066CC
+PIKK,#66FF66
+IKK,#61DD9C
+ULK/TTBK,#CCFF99
+EIF2AK/TLK,#FF99FF
+PKC,#9900FF
