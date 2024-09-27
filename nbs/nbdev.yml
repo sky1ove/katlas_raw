@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "katlas_raw"
+  site-url: "https://sky1ove.github.io/katlas_raw"
+  description: "Raw code for katlas"
+  repo-branch: main
+  repo-url: "https://github.com/sky1ove/katlas_raw"
