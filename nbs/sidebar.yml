@@ -1,0 +1,10 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 01a_Preprocessing_LS.ipynb
+      - 01b_Combine_Datasets.ipynb
+      - 02_Specificity.ipynb
+      - 03a_Compare_PSP_LS.ipynb
+      - 03b_Correlation_ST.ipynb
+      - 03c_Correlation_Tyr.ipynb
