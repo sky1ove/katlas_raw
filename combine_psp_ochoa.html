@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Build human phosphoproteome dataset with phosphorylated status – katlas_raw</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Build human phosphoproteome dataset with phosphorylated status – katlas_raw">
+<meta property="og:description" content="Raw code for katlas">
+<meta property="og:site_name" content="katlas_raw">
+<meta name="twitter:title" content="Build human phosphoproteome dataset with phosphorylated status – katlas_raw">
+<meta name="twitter:description" content="Raw code for katlas">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">katlas_raw</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Build human phosphoproteome dataset with phosphorylated status</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">katlas_raw</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preprocessing_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Large Scale dataset - sequence mapping and cleaning</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./combine_datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prepare dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./specificity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overall Specificity</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./compare_psp_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare PhosphoSitePlus and Large-scale datasets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_st.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Ser/Thr kinases</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_tyr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Tyr kinase</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#combine-phosphositeplus-and-ochoa-et-al." id="toc-combine-phosphositeplus-and-ochoa-et-al." class="nav-link" data-scroll-target="#combine-phosphositeplus-and-ochoa-et-al.">Combine PhosphoSitePlus and Ochoa et al.</a></li>
+  <li><a href="#process-psp" id="toc-process-psp" class="nav-link" data-scroll-target="#process-psp">Process PSP</a></li>
+  <li><a href="#process-ochoa" id="toc-process-ochoa" class="nav-link" data-scroll-target="#process-ochoa">Process Ochoa</a></li>
+  <li><a href="#merge-the-two" id="toc-merge-the-two" class="nav-link" data-scroll-target="#merge-the-two">Merge the two</a></li>
+  <li><a href="#query-uniprot-sequence-on-uniprot-mapping-sequence" id="toc-query-uniprot-sequence-on-uniprot-mapping-sequence" class="nav-link" data-scroll-target="#query-uniprot-sequence-on-uniprot-mapping-sequence">Query uniprot sequence on uniprot; mapping sequence</a></li>
+  <li><a href="#validate-position" id="toc-validate-position" class="nav-link" data-scroll-target="#validate-position">Validate position</a></li>
+  <li><a href="#phosphorylate-sequence" id="toc-phosphorylate-sequence" class="nav-link" data-scroll-target="#phosphorylate-sequence">Phosphorylate sequence</a></li>
+  <li><a href="#extract-sequence" id="toc-extract-sequence" class="nav-link" data-scroll-target="#extract-sequence">Extract sequence</a></li>
+  <li><a href="#add-gene-protein-information" id="toc-add-gene-protein-information" class="nav-link" data-scroll-target="#add-gene-protein-information">Add gene, protein information</a></li>
+  <li><a href="#test" id="toc-test" class="nav-link" data-scroll-target="#test">Test</a></li>
+  <li><a href="#save" id="toc-save" class="nav-link" data-scroll-target="#save">Save</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="combine_psp_ochoa.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Build human phosphoproteome dataset with phosphorylated status</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div id="78879e8c-52da-40ad-a8f8-367b0b692771" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> katlas.core <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>tqdm.pandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="combine-phosphositeplus-and-ochoa-et-al." class="level2">
+<h2 class="anchored" data-anchor-id="combine-phosphositeplus-and-ochoa-et-al.">Combine PhosphoSitePlus and Ochoa et al.</h2>
+<div id="6ce78edc-fbd0-42c2-a0de-65b56a5c991a" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ochoa <span class="op">=</span> Data.get_ochoa_site()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psp <span class="op">=</span> Data.get_psp_human_site()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9b8462aa-c036-4dcc-88e4-7328f8542845" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ochoa</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">uniprot</th>
+<th data-quarto-table-cell-role="th">position</th>
+<th data-quarto-table-cell-role="th">residue</th>
+<th data-quarto-table-cell-role="th">is_disopred</th>
+<th data-quarto-table-cell-role="th">disopred_score</th>
+<th data-quarto-table-cell-role="th">log10_hotspot_pval_min</th>
+<th data-quarto-table-cell-role="th">isHotspot</th>
+<th data-quarto-table-cell-role="th">uniprot_position</th>
+<th data-quarto-table-cell-role="th">functional_score</th>
+<th data-quarto-table-cell-role="th">current_uniprot</th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">gene</th>
+<th data-quarto-table-cell-role="th">Sequence</th>
+<th data-quarto-table-cell-role="th">is_valid</th>
+<th data-quarto-table-cell-role="th">site_seq</th>
+<th data-quarto-table-cell-role="th">gene_site</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>A0A075B6Q4</td>
+<td>24</td>
+<td>S</td>
+<td>True</td>
+<td>0.91</td>
+<td>6.839384</td>
+<td>True</td>
+<td>A0A075B6Q4_24</td>
+<td>0.149257</td>
+<td>A0A075B6Q4</td>
+<td>A0A075B6Q4_HUMAN</td>
+<td>None</td>
+<td>MDIQKSENEDDSEWEDVDDEKGDSNDDYDSAGLLSDEDCMSVPGKT...</td>
+<td>True</td>
+<td>VDDEKGDSNDDYDSA</td>
+<td>A0A075B6Q4_S24</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>A0A075B6Q4</td>
+<td>35</td>
+<td>S</td>
+<td>True</td>
+<td>0.87</td>
+<td>9.192622</td>
+<td>False</td>
+<td>A0A075B6Q4_35</td>
+<td>0.136966</td>
+<td>A0A075B6Q4</td>
+<td>A0A075B6Q4_HUMAN</td>
+<td>None</td>
+<td>MDIQKSENEDDSEWEDVDDEKGDSNDDYDSAGLLSDEDCMSVPGKT...</td>
+<td>True</td>
+<td>YDSAGLLSDEDCMSV</td>
+<td>A0A075B6Q4_S35</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>A0A075B6Q4</td>
+<td>57</td>
+<td>S</td>
+<td>False</td>
+<td>0.28</td>
+<td>0.818834</td>
+<td>False</td>
+<td>A0A075B6Q4_57</td>
+<td>0.125364</td>
+<td>A0A075B6Q4</td>
+<td>A0A075B6Q4_HUMAN</td>
+<td>None</td>
+<td>MDIQKSENEDDSEWEDVDDEKGDSNDDYDSAGLLSDEDCMSVPGKT...</td>
+<td>True</td>
+<td>IADHLFWSEETKSRF</td>
+<td>A0A075B6Q4_S57</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>A0A075B6Q4</td>
+<td>68</td>
+<td>S</td>
+<td>False</td>
+<td>0.03</td>
+<td>0.375986</td>
+<td>False</td>
+<td>A0A075B6Q4_68</td>
+<td>0.119811</td>
+<td>A0A075B6Q4</td>
+<td>A0A075B6Q4_HUMAN</td>
+<td>None</td>
+<td>MDIQKSENEDDSEWEDVDDEKGDSNDDYDSAGLLSDEDCMSVPGKT...</td>
+<td>True</td>
+<td>KSRFTEYSMTSSVMR</td>
+<td>A0A075B6Q4_S68</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>A0A075B6Q4</td>
+<td>71</td>
+<td>S</td>
+<td>False</td>
+<td>0.05</td>
+<td>0.000000</td>
+<td>False</td>
+<td>A0A075B6Q4_71</td>
+<td>0.095193</td>
+<td>A0A075B6Q4</td>
+<td>A0A075B6Q4_HUMAN</td>
+<td>None</td>
+<td>MDIQKSENEDDSEWEDVDDEKGDSNDDYDSAGLLSDEDCMSVPGKT...</td>
+<td>True</td>
+<td>FTEYSMTSSVMRRNE</td>
+<td>A0A075B6Q4_S71</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">112276</td>
+<td>V9GYY5</td>
+<td>127</td>
+<td>S</td>
+<td>True</td>
+<td>0.97</td>
+<td>3.193174</td>
+<td>False</td>
+<td>V9GYY5_127</td>
+<td>0.292446</td>
+<td>V9GYY5</td>
+<td>V9GYY5_HUMAN</td>
+<td>None</td>
+<td>KRDGDDRRPRLVLSFDEEKRREYLTGFHKRKVERKKAAIEEIKQRL...</td>
+<td>True</td>
+<td>EGGAGDRSEEEASST</td>
+<td>V9GYY5_S127</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">112277</td>
+<td>V9GYY5</td>
+<td>132</td>
+<td>S</td>
+<td>True</td>
+<td>0.93</td>
+<td>2.055830</td>
+<td>False</td>
+<td>V9GYY5_132</td>
+<td>0.219329</td>
+<td>V9GYY5</td>
+<td>V9GYY5_HUMAN</td>
+<td>None</td>
+<td>KRDGDDRRPRLVLSFDEEKRREYLTGFHKRKVERKKAAIEEIKQRL...</td>
+<td>True</td>
+<td>DRSEEEASSTEKPTK</td>
+<td>V9GYY5_S132</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">112278</td>
+<td>V9GYY5</td>
+<td>133</td>
+<td>S</td>
+<td>True</td>
+<td>0.89</td>
+<td>2.055830</td>
+<td>False</td>
+<td>V9GYY5_133</td>
+<td>0.202808</td>
+<td>V9GYY5</td>
+<td>V9GYY5_HUMAN</td>
+<td>None</td>
+<td>KRDGDDRRPRLVLSFDEEKRREYLTGFHKRKVERKKAAIEEIKQRL...</td>
+<td>True</td>
+<td>RSEEEASSTEKPTKA</td>
+<td>V9GYY5_S133</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">112279</td>
+<td>V9GYY5</td>
+<td>134</td>
+<td>T</td>
+<td>True</td>
+<td>0.83</td>
+<td>2.055830</td>
+<td>False</td>
+<td>V9GYY5_134</td>
+<td>0.187417</td>
+<td>V9GYY5</td>
+<td>V9GYY5_HUMAN</td>
+<td>None</td>
+<td>KRDGDDRRPRLVLSFDEEKRREYLTGFHKRKVERKKAAIEEIKQRL...</td>
+<td>True</td>
+<td>SEEEASSTEKPTKAL</td>
+<td>V9GYY5_T134</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">112280</td>
+<td>V9GYY5</td>
+<td>138</td>
+<td>T</td>
+<td>True</td>
+<td>0.82</td>
+<td>0.726611</td>
+<td>False</td>
+<td>V9GYY5_138</td>
+<td>0.121025</td>
+<td>V9GYY5</td>
+<td>V9GYY5_HUMAN</td>
+<td>None</td>
+<td>KRDGDDRRPRLVLSFDEEKRREYLTGFHKRKVERKKAAIEEIKQRL...</td>
+<td>True</td>
+<td>ASSTEKPTKALPRKS</td>
+<td>V9GYY5_T138</td>
+</tr>
+</tbody>
+</table>
+
+<p>112281 rows × 16 columns</p>
+</div>
+</div>
+</div>
+<div id="28e76a28-e28f-4362-87c3-fb4c7323cddc" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ochoa['gene'] = ochoa.gene.fillna(ochoa.current_uniprot)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ochoa['gene_site'] = ochoa.gene + '_' + ochoa.residue+ochoa.position.astype(str)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ochoa.to_parquet('ochoa_site.parquet')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>PSP is gene name, ochoa is porotein name</p>
+</section>
+<section id="process-psp" class="level2">
+<h2 class="anchored" data-anchor-id="process-psp">Process PSP</h2>
+<div id="95973773-e517-48c0-97ee-1e030c73cde6" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>psp <span class="op">=</span> psp[psp.site.<span class="bu">str</span>[<span class="dv">0</span>].isin([<span class="st">'S'</span>,<span class="st">'T'</span>,<span class="st">'Y'</span>])]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7b323334-1b1b-4f4c-9230-f55fb26837ac" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>psp <span class="op">=</span> psp[psp.LT_LIT.notna()].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6aa7326c-17b0-498d-af51-44eb4c5f66aa" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>psp <span class="op">=</span> psp[[<span class="st">'uniprot'</span>,<span class="st">'site'</span>]].copy() <span class="co">#'protein','gene'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="process-ochoa" class="level2">
+<h2 class="anchored" data-anchor-id="process-ochoa">Process Ochoa</h2>
+<div id="4e2aa1f1-a5ab-4868-8904-64ec67870736" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ochoa[<span class="st">'site'</span>] <span class="op">=</span> ochoa.residue<span class="op">+</span>ochoa.position.astype(<span class="bu">str</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8899b8e4-b7cd-42f8-af58-438d772ec305" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ochoa <span class="op">=</span> ochoa[[<span class="st">'uniprot'</span>,<span class="st">'site'</span>]].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="merge-the-two" class="level2">
+<h2 class="anchored" data-anchor-id="merge-the-two">Merge the two</h2>
+<div id="7cc02766-9273-48af-8d0a-952d15406e76" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>psp[<span class="st">'source'</span>], ochoa[<span class="st">'source'</span>] <span class="op">=</span> <span class="st">'psp'</span>,<span class="st">'ochoa'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="dc303d6c-2c03-4b7b-b9a9-95a902f3a48e" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> psp.merge(ochoa,how<span class="op">=</span><span class="st">'outer'</span>,on<span class="op">=</span>[<span class="st">'uniprot'</span>,<span class="st">'site'</span>],suffixes<span class="op">=</span>(<span class="st">'_1'</span>,<span class="st">'_2'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e2133e06-86ba-4e84-b5ae-f1e15d32cf97" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'source'</span>] <span class="op">=</span> comb.<span class="bu">apply</span>(<span class="kw">lambda</span> row: <span class="st">'|'</span>.join(<span class="bu">filter</span>(pd.notna, [row[<span class="st">'source_1'</span>], row[<span class="st">'source_2'</span>]])), axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="68bc70af-d6d5-4684-8628-69749a430086" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb.drop(columns<span class="op">=</span>[<span class="st">'source_1'</span>,<span class="st">'source_2'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7ad29900-21d9-4d19-b6d6-12423aa46e97" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>comb.source.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<pre><code>source
+ochoa        106327
+psp            9138
+psp|ochoa      5954
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="query-uniprot-sequence-on-uniprot-mapping-sequence" class="level2">
+<h2 class="anchored" data-anchor-id="query-uniprot-sequence-on-uniprot-mapping-sequence">Query uniprot sequence on uniprot; mapping sequence</h2>
+<p>Uncheck below to use the csv for uniprot id mapping</p>
+<div id="1a33aa19-2ade-4933-80c1-353ca805fe48" class="cell" data-execution_count="102">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># comb.drop_duplicates(subset='uniprot').to_csv('uniprot.csv',index=False)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="40b1ae6e-e7ba-4660-b3a1-06ccfd0deec8" class="cell" data-execution_count="103">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unmapped = pd.Series(['AAC50053',</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 'P18433-2',</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 'AAA58698',</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 'NP_001184222',</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 'AAA60149'])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ab17ed21-8e55-4a18-87bf-c30ea0409335" class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sequence <span class="op">=</span> pd.read_excel(<span class="st">'idmapping_2024_06_17.xlsx'</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># there are few duplicates uniprot (history uniprot)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>sequence <span class="op">=</span> sequence.drop_duplicates(subset<span class="op">=</span><span class="st">'uniprot'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="68d33aa8-03fe-4364-8981-ccb66e5f6de5" class="cell" data-execution_count="105">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>seq <span class="op">=</span> sequence[[<span class="st">'uniprot'</span>,<span class="st">'sequence'</span>]].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5885628a-af12-43de-afbe-d48d0f08aecb" class="cell" data-execution_count="106">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb.merge(seq,how<span class="op">=</span><span class="st">'inner'</span>,on<span class="op">=</span><span class="st">'uniprot'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8def6e4a-b5f1-4a60-ac17-7c39633e7c48" class="cell" data-execution_count="107">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>comb.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="107">
+<pre><code>(121342, 4)</code></pre>
+</div>
+</div>
+</section>
+<section id="validate-position" class="level2">
+<h2 class="anchored" data-anchor-id="validate-position">Validate position</h2>
+<div id="13596eb6-9081-436c-8a97-2bad5c710623" class="cell" data-execution_count="108">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'position'</span>] <span class="op">=</span> comb.site.<span class="bu">str</span>[<span class="dv">1</span>:].astype(<span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="693e8697-c405-43ee-9dcc-287bcc69155d" class="cell" data-execution_count="109">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'acceptor'</span>] <span class="op">=</span> comb.site.<span class="bu">str</span>[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="70b15e94-3aa0-41bb-b7f7-38e2984027a2" class="cell" data-execution_count="110">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> validate_position(row):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract amino acid and position from the new columns</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    amino_acid <span class="op">=</span> row[<span class="st">'acceptor'</span>]</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    position <span class="op">=</span> <span class="bu">int</span>(row[<span class="st">'position'</span>])</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check if the amino acid at the given position matches the specified amino acid</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> row[<span class="st">'sequence'</span>][position<span class="op">-</span><span class="dv">1</span>] <span class="op">==</span> amino_acid:</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">IndexError</span>:  <span class="co"># Handle the case when position-1 exceeds the length of sequence</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="98cb143f-03f6-45d6-a7ba-17aeea185d1e" class="cell" data-execution_count="111">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'is_valid'</span>] <span class="op">=</span> comb.<span class="bu">apply</span>(validate_position,axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="82b605f2-b90d-4f24-afbc-bfa0bfad0230" class="cell" data-execution_count="112">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>comb.is_valid.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="112">
+<pre><code>is_valid
+1    120174
+0      1168
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div id="e745d22f-eb6b-4015-ad82-1dcd41b1f906" class="cell" data-execution_count="113">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb[comb.is_valid<span class="op">==</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e23a3c21-e202-4a5f-ae3d-afcaa331a2ec" class="cell" data-execution_count="114">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>comb.source.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="114">
+<pre><code>source
+ochoa        105845
+psp            8382
+psp|ochoa      5947
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="phosphorylate-sequence" class="level2">
+<h2 class="anchored" data-anchor-id="phosphorylate-sequence">Phosphorylate sequence</h2>
+<div id="a336c72f-840d-43bd-9610-e292943b54c7" class="cell" data-execution_count="115">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>modify<span class="op">=</span>comb.groupby(<span class="st">'uniprot'</span>).agg({<span class="st">'site'</span>:<span class="kw">lambda</span> r: r.unique()}).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8a07229f-539f-4a0f-88b3-39d309320aa7" class="cell" data-execution_count="116">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>modify <span class="op">=</span> modify.merge(seq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="90d27390-6a23-4624-8919-73a0d30a7554" class="cell" data-execution_count="117">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> phosphorylate_seq(row):</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    seq <span class="op">=</span> <span class="bu">list</span>(row[<span class="st">'sequence'</span>])</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> pos <span class="kw">in</span> row[<span class="st">'site'</span>]:</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># extract character and position</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>        position <span class="op">=</span> <span class="bu">int</span>(pos[<span class="dv">1</span>:]) <span class="op">-</span> <span class="dv">1</span>  <span class="co"># Subtracting 1 because Python uses 0-based indexing</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convert sequence</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>        seq[position] <span class="op">=</span> seq[position].lower()</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">''</span>.join(seq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f6f2bbc5-7c0b-40de-b804-2006ccc11bc3" class="cell" data-execution_count="118">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>modify[<span class="st">'phospho_seq'</span>] <span class="op">=</span> modify.<span class="bu">apply</span>(phosphorylate_seq,axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="45ffe804-3516-418f-8616-3f3ec5ca2737" class="cell" data-execution_count="119">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>seq2 <span class="op">=</span> modify[[<span class="st">'uniprot'</span>,<span class="st">'phospho_seq'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extract-sequence" class="level2">
+<h2 class="anchored" data-anchor-id="extract-sequence">Extract sequence</h2>
+<div id="1947d918-a106-478e-878e-c26f6ef0df0d" class="cell" data-execution_count="120">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb.merge(seq2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e80faebb-ec43-4ec4-8200-510d9fe427a5" class="cell" data-execution_count="121">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>site_seq <span class="op">=</span> extract_site_seq(comb,<span class="st">'phospho_seq'</span>,<span class="st">'position'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>100%|██████████| 120174/120174 [00:17&lt;00:00, 6912.90it/s]</code></pre>
+</div>
+</div>
+<div id="5bb00c69-0cc7-45fe-82fa-debdcc271c16" class="cell" data-execution_count="122">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'site_seq'</span>] <span class="op">=</span> site_seq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-gene-protein-information" class="level2">
+<h2 class="anchored" data-anchor-id="add-gene-protein-information">Add gene, protein information</h2>
+<div id="e5005e8c-9280-4f37-accd-b51b018ea3b0" class="cell" data-execution_count="123">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>info <span class="op">=</span> sequence[[<span class="st">'uniprot'</span>,<span class="st">'uniprot_name'</span>,<span class="st">'gene'</span>]].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d8bbb8e5-99e3-451b-b382-6bd65be2eddd" class="cell" data-execution_count="124">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>info[<span class="st">'protein'</span>] <span class="op">=</span> info.uniprot_name.<span class="bu">str</span>.split(<span class="st">'_'</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0950c12d-4c7c-4b56-b9ee-aca9efede778" class="cell" data-execution_count="125">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>info[<span class="st">'gene'</span>] <span class="op">=</span> info.gene.fillna(info.protein)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="daeebc46-4dc0-4490-9353-9a3abe48dc7f" class="cell" data-execution_count="126">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>info[<span class="st">'gene'</span>] <span class="op">=</span> info[<span class="st">'gene'</span>].<span class="bu">str</span>.split(<span class="st">' '</span>).<span class="bu">str</span>[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="2420b865-754a-4032-b3db-0349d4b9a927" class="cell" data-execution_count="127">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb.merge(info)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e14fffc7-257f-471a-a23b-9d4bf0990d68" class="cell" data-execution_count="128">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>comb[<span class="st">'gene_site'</span>] <span class="op">=</span> comb.gene <span class="op">+</span> <span class="st">'_'</span> <span class="op">+</span> comb.site</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c01e69b6-94f9-4b96-b13b-243ec016f4e1" class="cell" data-execution_count="129">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>comb.source.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="129">
+<pre><code>source
+ochoa        105845
+psp            8382
+psp|ochoa      5947
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div id="df6ac7b2-f237-4c09-9321-c05b75dee8e5" class="cell" data-execution_count="130">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>reorder_col <span class="op">=</span> [<span class="st">'uniprot'</span>, <span class="st">'source'</span>, <span class="st">'gene_site'</span>,<span class="st">'site'</span>, <span class="st">'position'</span>, <span class="st">'acceptor'</span>, </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="st">'site_seq'</span>, <span class="st">'uniprot_name'</span>, <span class="st">'gene'</span>,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>       <span class="st">'protein'</span>,<span class="st">'phospho_seq'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f4c8a52e-1190-4637-8622-416177ad4bf5" class="cell" data-execution_count="131">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb[reorder_col]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="test" class="level2">
+<h2 class="anchored" data-anchor-id="test">Test</h2>
+<div id="f51649a5-d369-4f62-bf13-f58d02c7af1a" class="cell" data-scrolled="true" data-execution_count="132">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>query_gene(comb,<span class="st">'CTNNB1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="132">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">uniprot</th>
+<th data-quarto-table-cell-role="th">source</th>
+<th data-quarto-table-cell-role="th">gene_site</th>
+<th data-quarto-table-cell-role="th">site</th>
+<th data-quarto-table-cell-role="th">position</th>
+<th data-quarto-table-cell-role="th">acceptor</th>
+<th data-quarto-table-cell-role="th">site_seq</th>
+<th data-quarto-table-cell-role="th">uniprot_name</th>
+<th data-quarto-table-cell-role="th">gene</th>
+<th data-quarto-table-cell-role="th">protein</th>
+<th data-quarto-table-cell-role="th">phospho_seq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10801</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_T3</td>
+<td>T3</td>
+<td>3</td>
+<td>T</td>
+<td>_____MAtQADLMEL</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10760</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S23</td>
+<td>S23</td>
+<td>23</td>
+<td>S</td>
+<td>PDRKAAVsHWQQQsy</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10761</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S29</td>
+<td>S29</td>
+<td>29</td>
+<td>S</td>
+<td>VsHWQQQsyLDsGIH</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10762</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_Y30</td>
+<td>Y30</td>
+<td>30</td>
+<td>Y</td>
+<td>sHWQQQsyLDsGIHs</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10763</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S33</td>
+<td>S33</td>
+<td>33</td>
+<td>S</td>
+<td>QQQsyLDsGIHsGAT</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10764</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S37</td>
+<td>S37</td>
+<td>37</td>
+<td>S</td>
+<td>yLDsGIHsGATtTAP</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10765</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T41</td>
+<td>T41</td>
+<td>41</td>
+<td>T</td>
+<td>GIHsGATtTAPsLsG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10766</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S45</td>
+<td>S45</td>
+<td>45</td>
+<td>S</td>
+<td>GATtTAPsLsGKGNP</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10802</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_S47</td>
+<td>S47</td>
+<td>47</td>
+<td>S</td>
+<td>TtTAPsLsGKGNPEE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10767</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S60</td>
+<td>S60</td>
+<td>60</td>
+<td>S</td>
+<td>EEEDVDTsQVLyEWE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10768</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y64</td>
+<td>Y64</td>
+<td>64</td>
+<td>Y</td>
+<td>VDTsQVLyEWEQGFS</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10769</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S73</td>
+<td>S73</td>
+<td>73</td>
+<td>S</td>
+<td>WEQGFSQsFTQEQVA</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10770</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y86</td>
+<td>Y86</td>
+<td>86</td>
+<td>Y</td>
+<td>VADIDGQyAMTRAQR</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10771</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T102</td>
+<td>T102</td>
+<td>102</td>
+<td>T</td>
+<td>RAAMFPEtLDEGMQI</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10772</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T112</td>
+<td>T112</td>
+<td>112</td>
+<td>T</td>
+<td>EGMQIPStQFDAAHP</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10773</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T120</td>
+<td>T120</td>
+<td>120</td>
+<td>T</td>
+<td>QFDAAHPtNVQRLAE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10774</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y142</td>
+<td>Y142</td>
+<td>142</td>
+<td>Y</td>
+<td>AVVNLINyQDDAELA</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10775</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S184</td>
+<td>S184</td>
+<td>184</td>
+<td>S</td>
+<td>QLSKKEAsRHAIMRs</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10776</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S191</td>
+<td>S191</td>
+<td>191</td>
+<td>S</td>
+<td>sRHAIMRsPQMVSAI</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10777</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S246</td>
+<td>S246</td>
+<td>246</td>
+<td>S</td>
+<td>ALVKMLGsPVDSVLF</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10778</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T298</td>
+<td>T298</td>
+<td>298</td>
+<td>T</td>
+<td>VKFLAITtDCLQILA</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10779</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S311</td>
+<td>S311</td>
+<td>311</td>
+<td>S</td>
+<td>LAYGNQEsKLIILAS</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10780</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y331</td>
+<td>Y331</td>
+<td>331</td>
+<td>Y</td>
+<td>LVNIMRTytyEKLLW</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10781</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T332</td>
+<td>T332</td>
+<td>332</td>
+<td>T</td>
+<td>VNIMRTytyEKLLWT</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10782</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y333</td>
+<td>Y333</td>
+<td>333</td>
+<td>Y</td>
+<td>NIMRTytyEKLLWTT</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10783</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S352</td>
+<td>S352</td>
+<td>352</td>
+<td>S</td>
+<td>KVLSVCSsNKPAIVE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10784</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T371</td>
+<td>T371</td>
+<td>371</td>
+<td>T</td>
+<td>QALGLHLtDPsQRLV</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10785</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S374</td>
+<td>S374</td>
+<td>374</td>
+<td>S</td>
+<td>GLHLtDPsQRLVQNC</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10786</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T384</td>
+<td>T384</td>
+<td>384</td>
+<td>T</td>
+<td>LVQNCLWtLRNLSDA</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10787</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T393</td>
+<td>T393</td>
+<td>393</td>
+<td>T</td>
+<td>RNLSDAAtKQEGMEG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10788</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_T472</td>
+<td>T472</td>
+<td>472</td>
+<td>T</td>
+<td>ICALRHLtSRHQEAE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10789</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_Y489</td>
+<td>Y489</td>
+<td>489</td>
+<td>Y</td>
+<td>QNAVRLHyGLPVVVK</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10803</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_T547</td>
+<td>T547</td>
+<td>547</td>
+<td>T</td>
+<td>LVRAHQDtQRRtsMG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10790</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_T551</td>
+<td>T551</td>
+<td>551</td>
+<td>T</td>
+<td>HQDtQRRtsMGGtQQ</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10791</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S552</td>
+<td>S552</td>
+<td>552</td>
+<td>S</td>
+<td>QDtQRRtsMGGtQQQ</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10792</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_T556</td>
+<td>T556</td>
+<td>556</td>
+<td>T</td>
+<td>RRtsMGGtQQQFVEG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10793</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S605</td>
+<td>S605</td>
+<td>605</td>
+<td>S</td>
+<td>LFVQLLYsPIENIQR</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10794</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S646</td>
+<td>S646</td>
+<td>646</td>
+<td>S</td>
+<td>PLTELLHsRNEGVAt</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10795</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_T653</td>
+<td>T653</td>
+<td>653</td>
+<td>T</td>
+<td>sRNEGVAtyAAAVLF</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10796</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_Y654</td>
+<td>Y654</td>
+<td>654</td>
+<td>Y</td>
+<td>RNEGVAtyAAAVLFR</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10797</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_Y670</td>
+<td>Y670</td>
+<td>670</td>
+<td>Y</td>
+<td>SEDKPQDyKKRLsVE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10798</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S675</td>
+<td>S675</td>
+<td>675</td>
+<td>S</td>
+<td>QDyKKRLsVELtssL</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10804</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_T679</td>
+<td>T679</td>
+<td>679</td>
+<td>T</td>
+<td>KRLsVELtssLFRTE</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10805</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_S680</td>
+<td>S680</td>
+<td>680</td>
+<td>S</td>
+<td>RLsVELtssLFRTEP</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10806</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_S681</td>
+<td>S681</td>
+<td>681</td>
+<td>S</td>
+<td>LsVELtssLFRTEPM</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10799</td>
+<td>P35222</td>
+<td>psp|ochoa</td>
+<td>CTNNB1_S715</td>
+<td>S715</td>
+<td>715</td>
+<td>S</td>
+<td>GYRQDDPsyRsFHSG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10807</td>
+<td>P35222</td>
+<td>ochoa</td>
+<td>CTNNB1_Y716</td>
+<td>Y716</td>
+<td>716</td>
+<td>Y</td>
+<td>YRQDDPsyRsFHSGG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10800</td>
+<td>P35222</td>
+<td>psp</td>
+<td>CTNNB1_S718</td>
+<td>S718</td>
+<td>718</td>
+<td>S</td>
+<td>QDDPsyRsFHSGGYG</td>
+<td>CTNB1_HUMAN</td>
+<td>CTNNB1</td>
+<td>CTNB1</td>
+<td>MAtQADLMELDMAMEPDRKAAVsHWQQQsyLDsGIHsGATtTAPsLsGKGNPEEEDVDTsQVLyEWEQGFSQsFTQEQVADIDGQyAMTRAQRVRAAMFPEtLDEGMQIPStQFDAAHPtNVQRLAEPSQMLKHAVVNLINyQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEAsRHAIMRsPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGsPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITtDCLQILAYGNQEsKLIILASGGPQALVNIMRTytyEKLLWTTSRVLKVLSVCSsNKPAIVEAGGMQALGLHLtDPsQRLVQNCLWtLRNLSDAAtKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLtSRHQEAEMAQNAVRLHyGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDtQRRtsMGGtQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTI...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="save" class="level2">
+<h2 class="anchored" data-anchor-id="save">Save</h2>
+<div id="8136de9f-fe6c-46b4-aa49-b0ff5e55683c" class="cell" data-execution_count="133">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>comb <span class="op">=</span> comb.rename(columns<span class="op">=</span>{<span class="st">'phospho_seq'</span>:<span class="st">'sequence'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="91a0413c-a286-42d0-b0cf-2f42fa278325" class="cell" data-execution_count="134">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>comb.to_parquet(<span class="st">'ochoa_psp_combine_site_phospho.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="97825016-65fe-4619-bb1a-7d8789222606" class="cell" data-execution_count="135">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>comb.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="135">
+<pre><code>(120174, 11)</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/sky1ove\.github\.io\/katlas_raw");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
