@@ -8,3 +8,16 @@ website:
       - 03a_Compare_PSP_LS.ipynb
       - 03b_Correlation_ST.ipynb
       - 03c_Correlation_Tyr.ipynb
+      - 04a_Plot_heatmap_logo_CDDM.ipynb
+      - 04b_Plot_heatmap_logo_PSPA.ipynb
+      - 05_Hierarchical_clustering.ipynb
+      - 06_AA_feature.ipynb
+      - 07a_Combine_psp_ochoa.ipynb
+      - 07b_Plot_distribution.ipynb
+      - 07c_Enrichment_ATM.ipynb
+      - 08_AUCDF.ipynb
+      - 09a_ML_embedding.ipynb
+      - 09b_ML_training.ipynb
+      - 09c_ML_analysis.ipynb
+      - 09d_ML_predict.ipynb
+      - others_00_prepare_pct_reference.ipynb
