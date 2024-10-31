@@ -20,4 +20,5 @@ website:
       - 09b_ML_training.ipynb
       - 09c_ML_analysis.ipynb
       - 09d_ML_predict.ipynb
-      - others_00_prepare_pct_reference.ipynb
+      - others_00_Prepare_pct_reference.ipynb
+      - others_01_Process_AM.ipynb
