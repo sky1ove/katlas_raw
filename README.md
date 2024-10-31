@@ -6,6 +6,9 @@
 Reproduce datasets and figures for paper \[Computational Decoding of
 Human Kinome Substrate Specificities and Functions\]
 
+The function modules for python-katlas is available at:
+https://github.com/sky1ove/katlas
+
 ## Install
 
 To run notebooks successfully, install `dev` version of python-katlas:
@@ -24,11 +27,12 @@ availability.
 
 After installation, git clone this repository through:
 
-`git clone https://github.com/sky1ove/katlas_raw.git`
 
-Then to go to `nbs` folder to run notebooks:
+    git clone https://github.com/sky1ove/katlas_raw.git
 
-`cd nbs`
+Then to go to `nbs` folder and run notebooks:
+
+    cd nbs
 
 ## Doc site for this repository
 
