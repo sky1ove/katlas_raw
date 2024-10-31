@@ -12,9 +12,23 @@ To run notebooks successfully, install `dev` version of python-katlas:
 
     pip install 'python-katlas[dev]' -U
 
+## System Requirements
+
+We recommend using a CUDA-enabled environment for efficient protein
+embedding extraction and deep learning model training.
+
+Run `import torch; torch.cuda.is_available()` to check cuda
+availability.
+
 ## Instruction
 
-After installation, go to `nbs` folder to run notebooks
+After installation, git clone this repository through:
+
+`git clone https://github.com/sky1ove/katlas_raw.git`
+
+Then to go to `nbs` folder to run notebooks:
+
+`cd nbs`
 
 ## Doc site for this repository
 
