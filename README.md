@@ -12,4 +12,12 @@ To run notebooks successfully, install `dev` version of python-katlas:
 
     pip install 'python-katlas[dev]' -U
 
-## Go to `nbs` folder to run notebooks
+## Instruction
+
+After installation, go to `nbs` folder to run notebooks
+
+## Doc site for this repository
+
+Notebooks in the nbs folder can be visualized at:
+
+https://sky1ove.github.io/katlas_raw/
