@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Prepare kinase-substrate dataset – katlas_raw</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Prepare kinase-substrate dataset – katlas_raw">
+<meta property="og:description" content="Raw code for katlas">
+<meta property="og:site_name" content="katlas_raw">
+<meta name="twitter:title" content="Prepare kinase-substrate dataset – katlas_raw">
+<meta name="twitter:description" content="Raw code for katlas">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">katlas_raw</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./combine_datasets.html">Prepare kinase-substrate dataset</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">KATLAS raw</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preprocess_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Large-scale dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./combine_datasets.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Prepare kinase-substrate dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./specificity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overall Specificity</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./compare_psp_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare PhosphoSitePlus and Large-scale datasets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_st.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Ser/Thr kinases</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_tyr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Tyr kinase</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./plot_heatmap_logo_cddm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot heatmap and logo of CDDM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./plot_heatmap_logo_pspa.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot heatmap and logo of PSPA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./hierarchical_clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical clustering</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aa_feature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis of amino acid features</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./combine_psp_ochoa.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Build human phosphoproteome dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reactome_path.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reactome pathway analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichment_atm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinase enrichment analysis - ATM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aucdf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot AUCDF</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_embedding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinase embeddings</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DL/ML Training</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyze DL/ML results</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_predict.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Predict PSSMs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./others_00_prepare_pct_reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Get reference score to calculate percentile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./others_01_process_am.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Process AlphaMissense dataset</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#large-scale-dataset" id="toc-large-scale-dataset" class="nav-link active" data-scroll-target="#large-scale-dataset">Large scale dataset</a></li>
+  <li><a href="#phosphositeplus-dataset" id="toc-phosphositeplus-dataset" class="nav-link" data-scroll-target="#phosphositeplus-dataset">PhosphoSitePlus dataset</a></li>
+  <li><a href="#combine" id="toc-combine" class="nav-link" data-scroll-target="#combine">Combine</a></li>
+  <li><a href="#split-site-sequence-to-individual-columns" id="toc-split-site-sequence-to-individual-columns" class="nav-link" data-scroll-target="#split-site-sequence-to-individual-columns">Split site sequence to individual columns</a></li>
+  <li><a href="#add-extra-columns" id="toc-add-extra-columns" class="nav-link" data-scroll-target="#add-extra-columns">Add extra columns</a></li>
+  <li><a href="#save" id="toc-save" class="nav-link" data-scroll-target="#save">Save</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#visualize-counts" id="toc-visualize-counts" class="nav-link" data-scroll-target="#visualize-counts">Visualize counts</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="combine_datasets.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Prepare kinase-substrate dataset</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div id="ea4d370e-a187-4695-b412-34bb0aeafab5" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> spearmanr, pearsonr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="large-scale-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="large-scale-dataset">Large scale dataset</h2>
+<div id="1300a5c0-ecbc-481e-b085-c7ca556a0a78" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># large_scale data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>LS<span class="op">=</span> pd.read_excel(<span class="st">'raw/large_scale_final2.xlsx'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>LS[<span class="st">'gene_site'</span>] <span class="op">=</span> LS[<span class="st">'S_position'</span>]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>LS <span class="op">=</span> LS[[<span class="st">'Kinase'</span>,<span class="st">'gene_site'</span>,<span class="st">'substrate'</span>]]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>LS_info <span class="op">=</span> pd.read_csv(<span class="st">'raw/LS_info.csv'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>LS <span class="op">=</span> LS.merge(LS_info).drop(columns <span class="op">=</span> [<span class="st">'count'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="phosphositeplus-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="phosphositeplus-dataset">PhosphoSitePlus dataset</h2>
+<div id="18ab9321-825c-4a8a-8d4a-a2a680fa14cd" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>KS <span class="op">=</span> pd.read_csv(<span class="st">'raw/Kinase_Substrate_Dataset_final.csv'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># only keep human kinase substrate pairs</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>KS <span class="op">=</span> KS.query(<span class="st">'KIN_ORGANISM=="human"'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the substrate that does not have sty in the middle</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>KS <span class="op">=</span> KS[KS.substrate.<span class="bu">str</span>[<span class="dv">7</span>].isin([<span class="st">'s'</span>,<span class="st">'t'</span>,<span class="st">'y'</span>])].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>KS[<span class="st">'gene_site'</span>] <span class="op">=</span> KS.SUB_GENE.<span class="bu">str</span>.upper() <span class="op">+</span> <span class="st">"_"</span><span class="op">+</span>KS.SUB_MOD_RSD</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>KS <span class="op">=</span> KS[[<span class="st">'Kinase'</span>,<span class="st">'gene_site'</span>,<span class="st">'substrate'</span>,<span class="st">'kinase_uniprot'</span>,<span class="st">'kinase_paper'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="combine" class="level2">
+<h2 class="anchored" data-anchor-id="combine">Combine</h2>
+<div id="1bcf8068-a4ee-4b72-9af7-b19342deb27e" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>KS[<span class="st">'source'</span>] <span class="op">=</span> <span class="st">'pplus'</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>LS[<span class="st">'source'</span>] <span class="op">=</span> <span class="st">'large_scale'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="23a56125-5ce2-4fb3-a4d9-5a76d15259be" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([KS,LS]).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="70b24e5c-0562-452a-8d27-d6f608dceaff" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Kinase</th>
+<th data-quarto-table-cell-role="th">gene_site</th>
+<th data-quarto-table-cell-role="th">substrate</th>
+<th data-quarto-table-cell-role="th">kinase_uniprot</th>
+<th data-quarto-table-cell-role="th">kinase_paper</th>
+<th data-quarto-table-cell-role="th">source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>DYRK2</td>
+<td>GLI2_S385</td>
+<td>AEGLRPAsPLGLTQE</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>DYRK2</td>
+<td>SIAH2_S68</td>
+<td>GGGAGPVsPQHHELT</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>DYRK2</td>
+<td>CARHSP1_S41</td>
+<td>LRGNVVPsPLPtRRt</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>DYRK2</td>
+<td>DCX_S306</td>
+<td>GPMRRSKsPADSANG</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>DYRK2</td>
+<td>CDC25A_S283</td>
+<td>PErsQEEsPPGSTKr</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216464</td>
+<td>SPHK1</td>
+<td>HERC2_S2928</td>
+<td>AAVPFLAsDNEEEED</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216465</td>
+<td>SPHK1</td>
+<td>PARG_Y832</td>
+<td>DALHFRRyLDQFVPE</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216466</td>
+<td>SPHK1</td>
+<td>G6PI_T109</td>
+<td>ALRNRsNtPILVDGK</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216467</td>
+<td>PRPK</td>
+<td>TITIN_S20761</td>
+<td>DAERKSWsTVTTECs</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216468</td>
+<td>PRPK</td>
+<td>TITIN_S20768</td>
+<td>sTVTTECsKTSFRVA</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+</tr>
+</tbody>
+</table>
+
+<p>216469 rows × 6 columns</p>
+</div>
+</div>
+</div>
+<div id="40ca528f-b4df-4c0a-9620-07543c6c1620" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># kinase without mapping</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df.loc[df.kinase_paper.isna()].Kinase.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>Kinase
+LYNb            1694
+ABL1[T315I]     1320
+ABL1[E255K]     1274
+RET[M918T]      1221
+FGFR3[K650M]    1220
+                ... 
+GRP78              1
+TAO3               1
+PIK3CD             1
+PIK3CB             1
+G11                1
+Name: count, Length: 80, dtype: int64</code></pre>
+</div>
+</div>
+<div id="5d14f3ef-dcb3-4cc7-ad28-b5e73405c8cf" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df.substrate.<span class="bu">str</span>[<span class="dv">7</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>substrate
+y    109225
+s     74830
+t     32414
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div id="88c9bc6a-f311-454b-9e33-26f45ca34d4f" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.source.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>source
+large_scale    198248
+pplus           18221
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<div id="6312a6d1-bc65-463b-854e-a3354689e1d6" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>216469</code></pre>
+</div>
+</div>
+<div id="5ab37e54-6730-40e5-a543-4b440bd4ed26" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'substrate'</span>] <span class="op">=</span> df[<span class="st">'substrate'</span>].<span class="op">\</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'r'</span>, <span class="st">'R'</span>).<span class="op">\</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'k'</span>, <span class="st">'K'</span>).<span class="op">\</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'n'</span>, <span class="st">'N'</span>).<span class="op">\</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'d'</span>, <span class="st">'D'</span>).<span class="op">\</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'h'</span>, <span class="st">'H'</span>).<span class="op">\</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'c'</span>, <span class="st">'C'</span>).<span class="op">\</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'X'</span>, <span class="st">'_'</span>).<span class="op">\</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'p'</span>, <span class="st">'P'</span>).<span class="op">\</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'a'</span>, <span class="st">'A'</span>).<span class="op">\</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'v'</span>, <span class="st">'V'</span>).<span class="op">\</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'g'</span>, <span class="st">'G'</span>).<span class="op">\</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'m'</span>, <span class="st">'M'</span>).<span class="op">\</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'l'</span>, <span class="st">'L'</span>).<span class="op">\</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'q'</span>, <span class="st">'Q'</span>).<span class="op">\</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'f'</span>, <span class="st">'F'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Split phosphosite sequence to single amino acid</p>
+<div id="92cc851e-39e3-426b-8728-8e65e85791de" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Kinase</th>
+<th data-quarto-table-cell-role="th">gene_site</th>
+<th data-quarto-table-cell-role="th">substrate</th>
+<th data-quarto-table-cell-role="th">kinase_uniprot</th>
+<th data-quarto-table-cell-role="th">kinase_paper</th>
+<th data-quarto-table-cell-role="th">source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>DYRK2</td>
+<td>GLI2_S385</td>
+<td>AEGLRPAsPLGLTQE</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>DYRK2</td>
+<td>SIAH2_S68</td>
+<td>GGGAGPVsPQHHELT</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>DYRK2</td>
+<td>CARHSP1_S41</td>
+<td>LRGNVVPsPLPtRRt</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>DYRK2</td>
+<td>DCX_S306</td>
+<td>GPMRRSKsPADSANG</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>DYRK2</td>
+<td>CDC25A_S283</td>
+<td>PERsQEEsPPGSTKR</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216464</td>
+<td>SPHK1</td>
+<td>HERC2_S2928</td>
+<td>AAVPFLAsDNEEEED</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216465</td>
+<td>SPHK1</td>
+<td>PARG_Y832</td>
+<td>DALHFRRyLDQFVPE</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216466</td>
+<td>SPHK1</td>
+<td>G6PI_T109</td>
+<td>ALRNRsNtPILVDGK</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216467</td>
+<td>PRPK</td>
+<td>TITIN_S20761</td>
+<td>DAERKSWsTVTTECs</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216468</td>
+<td>PRPK</td>
+<td>TITIN_S20768</td>
+<td>sTVTTECsKTSFRVA</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+</tr>
+</tbody>
+</table>
+
+<p>216469 rows × 6 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="split-site-sequence-to-individual-columns" class="level2">
+<h2 class="anchored" data-anchor-id="split-site-sequence-to-individual-columns">Split site sequence to individual columns</h2>
+<div id="04e54bdf-bb29-4989-ae62-919d15644784" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the 'SITE_+/-7_AA' column into individual letters</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>split_cols <span class="op">=</span> df[<span class="st">'substrate'</span>].<span class="bu">apply</span>(<span class="bu">list</span>).<span class="bu">apply</span>(pd.Series).fillna(<span class="st">'_'</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the new columns from -7 to 7</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>split_cols.columns <span class="op">=</span> <span class="bu">range</span>(<span class="op">-</span><span class="dv">7</span>, <span class="dv">8</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the original dataframe with the split columns</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([df, split_cols], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8a7f5f88-5e8f-45af-9506-7ad176545c47" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Kinase</th>
+<th data-quarto-table-cell-role="th">gene_site</th>
+<th data-quarto-table-cell-role="th">substrate</th>
+<th data-quarto-table-cell-role="th">kinase_uniprot</th>
+<th data-quarto-table-cell-role="th">kinase_paper</th>
+<th data-quarto-table-cell-role="th">source</th>
+<th data-quarto-table-cell-role="th">-7</th>
+<th data-quarto-table-cell-role="th">-6</th>
+<th data-quarto-table-cell-role="th">-5</th>
+<th data-quarto-table-cell-role="th">-4</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">-2</th>
+<th data-quarto-table-cell-role="th">-1</th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+<th data-quarto-table-cell-role="th">2</th>
+<th data-quarto-table-cell-role="th">3</th>
+<th data-quarto-table-cell-role="th">4</th>
+<th data-quarto-table-cell-role="th">5</th>
+<th data-quarto-table-cell-role="th">6</th>
+<th data-quarto-table-cell-role="th">7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>DYRK2</td>
+<td>GLI2_S385</td>
+<td>AEGLRPAsPLGLTQE</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+<td>A</td>
+<td>E</td>
+<td>G</td>
+<td>L</td>
+<td>...</td>
+<td>P</td>
+<td>A</td>
+<td>s</td>
+<td>P</td>
+<td>L</td>
+<td>G</td>
+<td>L</td>
+<td>T</td>
+<td>Q</td>
+<td>E</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>DYRK2</td>
+<td>SIAH2_S68</td>
+<td>GGGAGPVsPQHHELT</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+<td>G</td>
+<td>G</td>
+<td>G</td>
+<td>A</td>
+<td>...</td>
+<td>P</td>
+<td>V</td>
+<td>s</td>
+<td>P</td>
+<td>Q</td>
+<td>H</td>
+<td>H</td>
+<td>E</td>
+<td>L</td>
+<td>T</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>DYRK2</td>
+<td>CARHSP1_S41</td>
+<td>LRGNVVPsPLPtRRt</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+<td>L</td>
+<td>R</td>
+<td>G</td>
+<td>N</td>
+<td>...</td>
+<td>V</td>
+<td>P</td>
+<td>s</td>
+<td>P</td>
+<td>L</td>
+<td>P</td>
+<td>t</td>
+<td>R</td>
+<td>R</td>
+<td>t</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>DYRK2</td>
+<td>DCX_S306</td>
+<td>GPMRRSKsPADSANG</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+<td>G</td>
+<td>P</td>
+<td>M</td>
+<td>R</td>
+<td>...</td>
+<td>S</td>
+<td>K</td>
+<td>s</td>
+<td>P</td>
+<td>A</td>
+<td>D</td>
+<td>S</td>
+<td>A</td>
+<td>N</td>
+<td>G</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>DYRK2</td>
+<td>CDC25A_S283</td>
+<td>PERsQEEsPPGSTKR</td>
+<td>Q92630</td>
+<td>DYRK2</td>
+<td>pplus</td>
+<td>P</td>
+<td>E</td>
+<td>R</td>
+<td>s</td>
+<td>...</td>
+<td>E</td>
+<td>E</td>
+<td>s</td>
+<td>P</td>
+<td>P</td>
+<td>G</td>
+<td>S</td>
+<td>T</td>
+<td>K</td>
+<td>R</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216464</td>
+<td>SPHK1</td>
+<td>HERC2_S2928</td>
+<td>AAVPFLAsDNEEEED</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+<td>A</td>
+<td>A</td>
+<td>V</td>
+<td>P</td>
+<td>...</td>
+<td>L</td>
+<td>A</td>
+<td>s</td>
+<td>D</td>
+<td>N</td>
+<td>E</td>
+<td>E</td>
+<td>E</td>
+<td>E</td>
+<td>D</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216465</td>
+<td>SPHK1</td>
+<td>PARG_Y832</td>
+<td>DALHFRRyLDQFVPE</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+<td>D</td>
+<td>A</td>
+<td>L</td>
+<td>H</td>
+<td>...</td>
+<td>R</td>
+<td>R</td>
+<td>y</td>
+<td>L</td>
+<td>D</td>
+<td>Q</td>
+<td>F</td>
+<td>V</td>
+<td>P</td>
+<td>E</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216466</td>
+<td>SPHK1</td>
+<td>G6PI_T109</td>
+<td>ALRNRsNtPILVDGK</td>
+<td>Q9NYA1</td>
+<td>NaN</td>
+<td>large_scale</td>
+<td>A</td>
+<td>L</td>
+<td>R</td>
+<td>N</td>
+<td>...</td>
+<td>s</td>
+<td>N</td>
+<td>t</td>
+<td>P</td>
+<td>I</td>
+<td>L</td>
+<td>V</td>
+<td>D</td>
+<td>G</td>
+<td>K</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">216467</td>
+<td>PRPK</td>
+<td>TITIN_S20761</td>
+<td>DAERKSWsTVTTECs</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+<td>D</td>
+<td>A</td>
+<td>E</td>
+<td>R</td>
+<td>...</td>
+<td>S</td>
+<td>W</td>
+<td>s</td>
+<td>T</td>
+<td>V</td>
+<td>T</td>
+<td>T</td>
+<td>E</td>
+<td>C</td>
+<td>s</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">216468</td>
+<td>PRPK</td>
+<td>TITIN_S20768</td>
+<td>sTVTTECsKTSFRVA</td>
+<td>Q96S44</td>
+<td>PRPK</td>
+<td>large_scale</td>
+<td>s</td>
+<td>T</td>
+<td>V</td>
+<td>T</td>
+<td>...</td>
+<td>E</td>
+<td>C</td>
+<td>s</td>
+<td>K</td>
+<td>T</td>
+<td>S</td>
+<td>F</td>
+<td>R</td>
+<td>V</td>
+<td>A</td>
+</tr>
+</tbody>
+</table>
+
+<p>216469 rows × 21 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="add-extra-columns" class="level2">
+<h2 class="anchored" data-anchor-id="add-extra-columns">Add extra columns</h2>
+<div id="bcdb68b1-aba3-48b7-b3ee-6fe942ad2379" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'kinase'</span>] <span class="op">=</span> df[<span class="st">'kinase_paper'</span>].fillna(df[<span class="st">'Kinase'</span>])</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'on_tree'</span>]<span class="op">=</span>df[<span class="st">'kinase_paper'</span>].notna().astype(<span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="save" class="level2">
+<h2 class="anchored" data-anchor-id="save">Save</h2>
+<blockquote class="blockquote">
+<p>Uncheck below</p>
+</blockquote>
+<div id="50cfc6b8-b6c9-44a9-b1ca-f0084d8d6c25" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> df.columns.astype(<span class="bu">str</span>) <span class="co"># Parquet can only save df with string column name</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>df.to_parquet(<span class="st">'raw/df.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<blockquote class="blockquote">
+<p>Need to convert the number in the columns to integer type</p>
+</blockquote>
+<div id="4b05823b-1b3a-4d49-bfbc-7b95a1bb5558" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'raw/df.parquet'</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Convert the number in the column name into integer</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="bu">int</span>(col) <span class="cf">if</span> col.lstrip(<span class="st">'-'</span>).isdigit() <span class="cf">else</span> col <span class="cf">for</span> col <span class="kw">in</span> df.columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualize-counts" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-counts">Visualize counts</h2>
+<div id="beeb2039-1957-4754-9583-b163a43f7c71" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df.kinase.value_counts().hist(bins<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">100</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'count per kinase'</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'# kinase'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01b_Combine_Datasets_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="c2989f5b-c96e-43d4-90bd-8ecc3371fbe5" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cnt <span class="op">=</span> df.kinase.value_counts().reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="918ed422-6161-4933-909f-b160a676524d" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>cnt.columns <span class="op">=</span> [<span class="st">'kinase'</span>,<span class="st">'count'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="61d76c42-cc97-434e-a65d-f13e59a36266" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>cnt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">kinase</th>
+<th data-quarto-table-cell-role="th">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>SRC</td>
+<td>2605</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>EPHA3</td>
+<td>2120</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>FES</td>
+<td>2013</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>NTRK3</td>
+<td>1927</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>ALK</td>
+<td>1889</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">488</td>
+<td>CAMK1G</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">489</td>
+<td>CAMK2D iso8</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">490</td>
+<td>PHKA1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">491</td>
+<td>VPRBP</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">492</td>
+<td>NEK10</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+<p>493 rows × 2 columns</p>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/sky1ove\.github\.io\/katlas_raw");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

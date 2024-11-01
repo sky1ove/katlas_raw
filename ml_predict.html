@@ -1,0 +1,4678 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Based on trained models, predict PSSMs of previously uncharacterized kinases.">
+
+<title>Predict PSSMs – katlas_raw</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Predict PSSMs – katlas_raw">
+<meta property="og:description" content="Based on trained models, predict PSSMs of previously uncharacterized kinases.">
+<meta property="og:site_name" content="katlas_raw">
+<meta name="twitter:title" content="Predict PSSMs – katlas_raw">
+<meta name="twitter:description" content="Based on trained models, predict PSSMs of previously uncharacterized kinases.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">katlas_raw</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ml_predict.html">Predict PSSMs</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">KATLAS raw</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preprocess_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preprocess Large-scale dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./combine_datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prepare kinase-substrate dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./specificity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overall Specificity</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./compare_psp_ls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare PhosphoSitePlus and Large-scale datasets</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_st.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Ser/Thr kinases</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./correlation_tyr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compare CDDM and PSPA in Tyr kinase</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./plot_heatmap_logo_cddm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot heatmap and logo of CDDM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./plot_heatmap_logo_pspa.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot heatmap and logo of PSPA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./hierarchical_clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical clustering</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aa_feature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis of amino acid features</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./combine_psp_ochoa.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Build human phosphoproteome dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reactome_path.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reactome pathway analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./enrichment_atm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinase enrichment analysis - ATM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./aucdf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plot AUCDF</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_embedding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinase embeddings</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DL/ML Training</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyze DL/ML results</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_predict.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Predict PSSMs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./others_00_prepare_pct_reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Get reference score to calculate percentile</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./others_01_process_am.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Process AlphaMissense dataset</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a>
+  <ul class="collapse">
+  <li><a href="#get-protein-embeddings" id="toc-get-protein-embeddings" class="nav-link" data-scroll-target="#get-protein-embeddings">Get protein embeddings</a></li>
+  </ul></li>
+  <li><a href="#prepare-models" id="toc-prepare-models" class="nav-link" data-scroll-target="#prepare-models">Prepare models</a></li>
+  <li><a href="#predict-through-top-models" id="toc-predict-through-top-models" class="nav-link" data-scroll-target="#predict-through-top-models">Predict through top models</a></li>
+  <li><a href="#aggregate-results" id="toc-aggregate-results" class="nav-link" data-scroll-target="#aggregate-results">Aggregate results</a></li>
+  <li><a href="#post-process" id="toc-post-process" class="nav-link" data-scroll-target="#post-process">Post-process</a></li>
+  <li><a href="#select-kinase-families-with-high-oof-pearson-scores" id="toc-select-kinase-families-with-high-oof-pearson-scores" class="nav-link" data-scroll-target="#select-kinase-families-with-high-oof-pearson-scores">Select kinase families with high oof Pearson scores</a></li>
+  <li><a href="#visualize-predicted-pssms" id="toc-visualize-predicted-pssms" class="nav-link" data-scroll-target="#visualize-predicted-pssms">Visualize predicted PSSMs</a></li>
+  <li><a href="#save-images" id="toc-save-images" class="nav-link" data-scroll-target="#save-images">Save images</a></li>
+  <li><a href="#save-and-combine-images-for-pdf" id="toc-save-and-combine-images-for-pdf" class="nav-link" data-scroll-target="#save-and-combine-images-for-pdf">Save and combine images for pdf</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="ml_predict.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predict PSSMs</h1>
+</div>
+
+<div>
+  <div class="description">
+    Based on trained models, predict PSSMs of previously uncharacterized kinases.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div id="9491d2ee-9edc-4368-9a65-90beb6f881a6" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> katlas.imports <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastbook <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> <span class="bu">reduce</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<div id="02d0aa51-9634-46f2-b917-bb31f41fd45f" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> Data.get_kinase_info().query(<span class="st">'pseudo=="0"'</span>) <span class="co"># exclude pseudo kinase</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="57ff77f4-216e-4d16-affd-7004f6aa0ddb" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove too long proteins as they can't fit into the model</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df.human_uniprot_sequence.<span class="bu">str</span>.<span class="bu">len</span>()<span class="op">&lt;</span><span class="dv">7000</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df.kinasecom_domain.<span class="bu">str</span>.<span class="bu">len</span>()<span class="op">&lt;</span><span class="dv">7000</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="get-protein-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="get-protein-embeddings">Get protein embeddings</h3>
+<p>Uncheck below to get protein embeddings for the kinases</p>
+<div id="9b4921a7-ac8a-4aa8-8576-1ee1e855ed76" class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove too long proteins as they can't fit into the model</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># valid_uniprot = df[df.human_uniprot_sequence.str.len()&lt;7000]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># valid_kd = df[df.kinasecom_domain.str.len()&lt;7000]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8103d294-0018-4455-9649-bca4038a15a3" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm = get_esm(valid_uniprot,'human_uniprot_sequence')</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm_kd = get_esm(valid_kd,'kinasecom_domain')</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5 = get_t5(valid_uniprot,'human_uniprot_sequence')</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5_kd = get_t5(valid_kd,'kinasecom_domain')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7e5355f3-d201-4eb7-b65b-9db50dc4a216" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm.index=valid_uniprot.kinase</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5.index = valid_uniprot.kinase</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm_kd.index = valid_kd.kinase</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5_kd.index= valid_kd.kinase</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="aca08f3c-a5f9-4b0b-98be-8141a996bf8c" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm.astype(float).to_parquet('raw/esm_unknown.parquet')</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_esm_kd.astype(float).to_parquet('raw/esm_unknown_kd.parquet')</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5.astype(float).to_parquet('raw/t5_unknown.parquet')</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># feat_t5_kd.astype(float).to_parquet('raw/t5_unknown_kd.parquet')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or directly load</p>
+<div id="d18e644b-9ad2-4f49-b19e-5e30a4cd78c3" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>feat_esm <span class="op">=</span> pd.read_parquet(<span class="st">'raw/esm_unknown.parquet'</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>feat_esm_kd <span class="op">=</span> pd.read_parquet(<span class="st">'raw/esm_unknown_kd.parquet'</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>feat_t5 <span class="op">=</span> pd.read_parquet(<span class="st">'raw/t5_unknown.parquet'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>feat_t5_kd <span class="op">=</span> pd.read_parquet(<span class="st">'raw/t5_unknown_kd.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d6926cbf-836e-4020-88fb-89f9792867d5" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>feat_esm.shape,feat_esm_kd.shape,feat_t5.shape,feat_t5_kd.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>((508, 1280), (503, 1280), (508, 1024), (503, 1024))</code></pre>
+</div>
+</div>
+<div id="d6a2977b-54a9-4d51-87bb-92d42555da37" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter out pseudokinase</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>feat_esm <span class="op">=</span> feat_esm[feat_esm.index.isin(df.kinase)]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>feat_esm_kd <span class="op">=</span> feat_esm_kd[feat_esm_kd.index.isin(df.kinase)]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>feat_t5 <span class="op">=</span> feat_t5[feat_t5.index.isin(df.kinase)]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>feat_t5_kd <span class="op">=</span> feat_t5_kd[feat_t5_kd.index.isin(df.kinase)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="prepare-models" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-models">Prepare models</h2>
+<p>5 Fold x 3 models = 15 models</p>
+<div id="d7fdcd9f-2dbd-49a2-ba77-bd804fc9084a" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> [<span class="st">'cnn_esm_kd'</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">'cnn_t5_kd'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">'cnn_t5'</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 'mlp_t5',</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="4239b555-8a3a-452f-98a6-8669defee19a" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># will not use these data, just to get t5_col and esm_col</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>t5 <span class="op">=</span> pd.read_parquet(<span class="st">'train_data/combine_t5.parquet'</span>).reset_index()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>esm <span class="op">=</span> pd.read_parquet(<span class="st">'train_data/combine_esm.parquet'</span>).reset_index()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># feature column</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>t5_col <span class="op">=</span> t5.columns[t5.columns.<span class="bu">str</span>.startswith(<span class="st">'T5_'</span>)]</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>esm_col <span class="op">=</span> esm.columns[esm.columns.<span class="bu">str</span>.startswith(<span class="st">'esm_'</span>)]</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># target column</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>target_col <span class="op">=</span> t5.columns[<span class="op">~</span>t5.columns.isin(t5_col)][<span class="dv">1</span>:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="4f20c4a0-2a65-4c8d-9bad-f15702372ab2" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>num_esm <span class="op">=</span> <span class="bu">len</span>(esm_col)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>num_t5 <span class="op">=</span> <span class="bu">len</span>(t5_col)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>num_target <span class="op">=</span> <span class="bu">len</span>(target_col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8f7b5b79-0d24-4675-8c9f-024978d69fa6" class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cnn_esm():</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> CNN1D_2(num_esm, num_target)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cnn_t5():</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> CNN1D_2(num_t5, num_target)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mlp_t5():</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> MLP_1(num_t5, num_target)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mlp_esm():</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> MLP_1(num_esm, num_target)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9b981779-8b65-403f-b666-f5c818a926a2" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'cnn_esm_kd'</span>:(feat_esm_kd, esm_col, cnn_esm()),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'cnn_t5_kd'</span>: (feat_t5_kd, t5_col, cnn_t5()),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'cnn_t5'</span>:(feat_t5, t5_col, cnn_t5()) </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a> }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="predict-through-top-models" class="level2">
+<h2 class="anchored" data-anchor-id="predict-through-top-models">Predict through top models</h2>
+<div id="6ef9c84c-12a5-4e5a-95c3-02ed5bd07f8e" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>predict_dl?</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">Signature:</span> predict_dl<span class="ansi-blue-fg">(</span>df<span class="ansi-blue-fg">,</span> feat_col<span class="ansi-blue-fg">,</span> target_col<span class="ansi-blue-fg">,</span> model<span class="ansi-blue-fg">,</span> model_pth<span class="ansi-blue-fg">)</span>
+<span class="ansi-red-fg">Docstring:</span> Predict dataframe given a deep learning model
+<span class="ansi-red-fg">File:</span>      /usr/local/lib/python3.9/dist-packages/katlas/dl.py
+<span class="ansi-red-fg">Type:</span>      function
+</pre>
+</div>
+</div>
+</div>
+<div id="5fc874b5-6c27-4579-8395-8a76b51b3f1a" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>N_FOLD<span class="op">=</span><span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="aa964f1e-9615-48a5-8d76-f06f534fce87" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pred_list <span class="op">=</span> []</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> model_name, (data,feat_col,model) <span class="kw">in</span> models.items():</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N_FOLD):</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        pred <span class="op">=</span> predict_dl(data,feat_col,target_col,model, <span class="ss">f'</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">_fold</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        pred_list.append(pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b1edaaab-10d4-4c3b-bc70-4e2414c645b8" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(pred_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>15</code></pre>
+</div>
+</div>
+</section>
+<section id="aggregate-results" class="level2">
+<h2 class="anchored" data-anchor-id="aggregate-results">Aggregate results</h2>
+<div id="0c4c0c9a-a62b-4986-a50f-c54c0a5b3baa" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add up everything</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> <span class="bu">reduce</span>(<span class="kw">lambda</span> x, y: x.add(y, fill_value<span class="op">=</span><span class="dv">0</span>), pred_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="3dd258c6-070f-4313-8376-fe250ecbc98b" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_heatmap(df, <span class="co"># Stacked Dataframe with kinase as index, substrates as columns</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                kinase, <span class="co"># A specific kinase name in index</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                figsize <span class="op">=</span> (<span class="fl">7.5</span>,<span class="dv">10</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>               ):</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Plot PSSM of a single kinase from a df"</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get a single kinase matrix from the df</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    matrix <span class="op">=</span> get_one_kinase(df, kinase,drop_s<span class="op">=</span><span class="va">False</span>).T</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># reorder aa order</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    aa_order <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="st">'PGACSTVILMFYWHKRQNDEsty'</span>]</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    matrix <span class="op">=</span> matrix.reindex(index<span class="op">=</span>aa_order)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    plot_heatmap(matrix,title<span class="op">=</span>kinase,figsize<span class="op">=</span>figsize)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="584dec71-e00d-493e-9145-8c8d48311b46" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sns.<span class="bu">set</span>(rc<span class="op">=</span>{<span class="st">"figure.dpi"</span>:<span class="dv">300</span>, <span class="st">'savefig.dpi'</span>:<span class="dv">300</span>})</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">'notebook'</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"ticks"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="467de61b-7cce-4b60-91cf-34e1cbe93e2e" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>get_heatmap(preds.iloc[:,:<span class="op">-</span><span class="dv">3</span>],<span class="st">'CK1A2'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="post-process" class="level2">
+<h2 class="anchored" data-anchor-id="post-process">Post-process</h2>
+<div id="b5f8ed3c-372c-4150-b530-199802545534" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove kinase with duplicated name</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>preds<span class="op">=</span> preds[<span class="op">~</span>preds.index.duplicated()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1517bead-61bf-4620-92ff-19f28d53d642" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>preds_minmax <span class="op">=</span> MinMaxScaler().fit_transform(preds.T).T</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e5e4c548-151f-4907-bf8a-b145094c003d" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> preds_minmax.index:</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> get_one_kinase(preds_minmax,k,drop_s<span class="op">=</span><span class="va">False</span>).T</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> w<span class="op">/</span>w.<span class="bu">sum</span>()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    w2 <span class="op">=</span> w.unstack().reset_index(name<span class="op">=</span>k)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    w2[<span class="st">'substrate'</span>] <span class="op">=</span> w2.position.astype(<span class="bu">str</span>)<span class="op">+</span>w2.aa</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    w3 <span class="op">=</span> w2.set_index(<span class="st">'substrate'</span>)[k]</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    data.append(w3)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="a63a96de-7aa0-49f0-acf6-95c9c7a6d6b4" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>preds_final <span class="op">=</span> pd.concat(data,axis<span class="op">=</span><span class="dv">1</span>).T</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>preds_final <span class="op">=</span> preds_final[target_col]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="21b7f373-4c81-4332-9789-4c074aa9feb4" class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>preds_final <span class="op">=</span> preds_final[<span class="op">~</span>preds_final.index.isin(t5.kinase)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="2d547f58-6de1-4c4c-a8d5-011da4affda0" class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>preds_final.index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Index(['ADCK1', 'ADCK2', 'COQ8A', 'COQ8B', 'ADCK5', 'ACVRL1', 'ACVR1C',
+       'ALPK3', 'ALPK2', 'ARAF', 'CASK', 'CDK20', 'CDKL2', 'CDKL3', 'CDKL4',
+       'STK35', 'PDIK1L', 'DCLK3', 'DDR1', 'CDC42BPG', 'STK17B', 'ERBB2',
+       'MAPK6', 'MAPK4', 'STK36', 'TNNI3K', 'AATK', 'LMTK2', 'LMTK3', 'LRRK1',
+       'MAP3K13', 'MAP2K6', 'MAP3K4', 'MAST1', 'MAST2', 'MAST3', 'MAST4',
+       'AMHR2', 'PKMYT1', 'NEK10', 'NRK', 'PDHK3', 'CDK15', 'PIK3R4', 'CDK11B',
+       'PSKH1', 'RIOK1', 'RIOK2', 'RIOK3', 'RNASEL', 'ROR1', 'ROR2', 'SBK2',
+       'SBK3', 'ANKK1', 'RSKR', 'SPEG', 'TESK2', 'TIE1', 'KALRN', 'TRIO',
+       'TSSK3', 'TSSK4', 'WEE2', 'STK32A'],
+      dtype='object')</code></pre>
+</div>
+</div>
+<div id="4cab0a3a-bb2d-4742-b75f-9ecb021aff25" class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># preds_final.to_parquet('raw/predicted.parquet')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="697fdff7-844c-4ef2-9b03-9df16f6e142d" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># or directly load</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>preds_final <span class="op">=</span> pd.read_parquet(<span class="st">'raw/predicted.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="select-kinase-families-with-high-oof-pearson-scores" class="level2">
+<h2 class="anchored" data-anchor-id="select-kinase-families-with-high-oof-pearson-scores">Select kinase families with high oof Pearson scores</h2>
+<div id="9dcda465-950a-4a0c-9696-fa6d68f3828b" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>family_score <span class="op">=</span> pd.read_csv(<span class="st">'raw/oof_corr_family.csv'</span>).rename(columns<span class="op">=</span>{<span class="st">'kinase'</span>:<span class="st">'family_count'</span>,<span class="st">'Pearson'</span>:<span class="st">'Pearson_family'</span>})</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>subfamily_score <span class="op">=</span> pd.read_csv(<span class="st">'raw/oof_corr_subfamily.csv'</span>).rename(columns<span class="op">=</span>{<span class="st">'kinase'</span>:<span class="st">'subfamily_count'</span>,<span class="st">'Pearson'</span>:<span class="st">'Pearson_subfamily'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="42ef34dc-d481-4c5e-b49c-100d585137dc" class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>family_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">Pearson_family</th>
+<th data-quarto-table-cell-role="th">family_count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ALK</td>
+<td>0.968724</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Abl</td>
+<td>0.959211</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Ack</td>
+<td>0.830424</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Akt</td>
+<td>0.974935</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Alpha</td>
+<td>0.198162</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">95</td>
+<td>VEGFR</td>
+<td>0.964378</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">96</td>
+<td>VRK</td>
+<td>0.651387</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">97</td>
+<td>WEE</td>
+<td>-0.090115</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">98</td>
+<td>WNK</td>
+<td>0.618240</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">99</td>
+<td>YANK</td>
+<td>0.816684</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+
+<p>100 rows × 3 columns</p>
+</div>
+</div>
+</div>
+<div id="99d6e97e-09c7-4d39-8c6d-cf4a19f7dcb2" class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>preds_info <span class="op">=</span> pd.DataFrame(preds_final.index,columns<span class="op">=</span>[<span class="st">'kinase'</span>]).merge(df,<span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0e4e85e7-1a1f-48f4-a821-45c8b3bceb75" class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>preds_info <span class="op">=</span> preds_info.merge(family_score,<span class="st">'left'</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>preds_info <span class="op">=</span> preds_info.merge(subfamily_score,<span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="711d8e7b-cb55-4055-9617-9ee3c7952283" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>preds_info <span class="op">=</span> preds_info[[<span class="st">'kinase'</span>,<span class="st">'ID_coral'</span>,<span class="st">'uniprot'</span>,<span class="st">'ID_HGNC'</span>,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                         <span class="st">'group'</span>,<span class="st">'family'</span>,<span class="st">'subfamily'</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                         <span class="st">'Pearson_family'</span>,<span class="st">'family_count'</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                         <span class="st">'Pearson_subfamily'</span>,<span class="st">'subfamily_count'</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                        ]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5e0fd16e-dc1a-40fd-ae9c-2c37a05a911c" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>selected <span class="op">=</span> pd.read_csv(<span class="st">'raw/pred_kinase.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c75e405f-239e-4a42-a0f5-cd126e4e6a9f" class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>selected_df <span class="op">=</span> preds_info[preds_info.kinase.isin(selected.kinase)]</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>selected_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">kinase</th>
+<th data-quarto-table-cell-role="th">ID_coral</th>
+<th data-quarto-table-cell-role="th">uniprot</th>
+<th data-quarto-table-cell-role="th">ID_HGNC</th>
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">subfamily</th>
+<th data-quarto-table-cell-role="th">Pearson_family</th>
+<th data-quarto-table-cell-role="th">family_count</th>
+<th data-quarto-table-cell-role="th">Pearson_subfamily</th>
+<th data-quarto-table-cell-role="th">subfamily_count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>ACVRL1</td>
+<td>ALK1</td>
+<td>P37023</td>
+<td>ACVRL1</td>
+<td>TKL</td>
+<td>STKR</td>
+<td>STKR1</td>
+<td>0.857840</td>
+<td>9.0</td>
+<td>0.908758</td>
+<td>5.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>ACVR1C</td>
+<td>ALK7</td>
+<td>Q8NER5</td>
+<td>ACVR1C</td>
+<td>TKL</td>
+<td>STKR</td>
+<td>STKR1</td>
+<td>0.857840</td>
+<td>9.0</td>
+<td>0.908758</td>
+<td>5.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11</td>
+<td>CDK20</td>
+<td>CCRK</td>
+<td>Q8IZL9</td>
+<td>CDK20</td>
+<td>CMGC</td>
+<td>CDK</td>
+<td>CDK</td>
+<td>0.923265</td>
+<td>17.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12</td>
+<td>CDKL2</td>
+<td>CDKL2</td>
+<td>Q92772</td>
+<td>CDKL2</td>
+<td>CMGC</td>
+<td>CDKL</td>
+<td>CDKL</td>
+<td>0.763117</td>
+<td>2.0</td>
+<td>0.763117</td>
+<td>2.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">13</td>
+<td>CDKL3</td>
+<td>CDKL3</td>
+<td>Q8IVW4</td>
+<td>CDKL3</td>
+<td>CMGC</td>
+<td>CDKL</td>
+<td>CDKL</td>
+<td>0.763117</td>
+<td>2.0</td>
+<td>0.763117</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">14</td>
+<td>CDKL4</td>
+<td>CDKL4</td>
+<td>Q5MAI5</td>
+<td>CDKL4</td>
+<td>CMGC</td>
+<td>CDKL</td>
+<td>CDKL</td>
+<td>0.763117</td>
+<td>2.0</td>
+<td>0.763117</td>
+<td>2.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">17</td>
+<td>DCLK3</td>
+<td>DCAMKL3</td>
+<td>Q9C098</td>
+<td>DCLK3</td>
+<td>CAMK</td>
+<td>DCAMKL</td>
+<td>DCAMKL</td>
+<td>0.901985</td>
+<td>2.0</td>
+<td>0.901985</td>
+<td>2.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">19</td>
+<td>CDC42BPG</td>
+<td>DMPK2</td>
+<td>Q6DT37</td>
+<td>CDC42BPG</td>
+<td>AGC</td>
+<td>DMPK</td>
+<td>GEK</td>
+<td>0.954669</td>
+<td>6.0</td>
+<td>0.961369</td>
+<td>3.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">20</td>
+<td>STK17B</td>
+<td>DRAK2</td>
+<td>O94768</td>
+<td>STK17B</td>
+<td>CAMK</td>
+<td>DAPK</td>
+<td>DAPK</td>
+<td>0.792083</td>
+<td>4.0</td>
+<td>0.792083</td>
+<td>4.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">22</td>
+<td>MAPK6</td>
+<td>Erk3</td>
+<td>Q16659</td>
+<td>MAPK6</td>
+<td>CMGC</td>
+<td>MAPK</td>
+<td>ERK3</td>
+<td>0.881876</td>
+<td>12.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23</td>
+<td>MAPK4</td>
+<td>Erk4</td>
+<td>P31152</td>
+<td>MAPK4</td>
+<td>CMGC</td>
+<td>MAPK</td>
+<td>ERK3</td>
+<td>0.881876</td>
+<td>12.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">25</td>
+<td>TNNI3K</td>
+<td>HH498</td>
+<td>Q59H18</td>
+<td>TNNI3K</td>
+<td>TKL</td>
+<td>MLK</td>
+<td>HH498</td>
+<td>0.733784</td>
+<td>7.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">30</td>
+<td>MAP3K13</td>
+<td>LZK</td>
+<td>O43283</td>
+<td>MAP3K13</td>
+<td>TKL</td>
+<td>MLK</td>
+<td>LZK</td>
+<td>0.733784</td>
+<td>7.0</td>
+<td>0.497632</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">32</td>
+<td>MAP3K4</td>
+<td>MAP3K4</td>
+<td>Q9Y6R4</td>
+<td>MAP3K4</td>
+<td>STE</td>
+<td>STE11</td>
+<td>STE11</td>
+<td>0.749903</td>
+<td>7.0</td>
+<td>0.749903</td>
+<td>7.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">37</td>
+<td>AMHR2</td>
+<td>MISR2</td>
+<td>Q16671</td>
+<td>AMHR2</td>
+<td>TKL</td>
+<td>STKR</td>
+<td>STKR2</td>
+<td>0.857840</td>
+<td>9.0</td>
+<td>0.794193</td>
+<td>4.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">39</td>
+<td>NEK10</td>
+<td>NEK10</td>
+<td>Q6ZWH5</td>
+<td>NEK10</td>
+<td>Other</td>
+<td>NEK</td>
+<td>NEK</td>
+<td>0.778235</td>
+<td>10.0</td>
+<td>0.778235</td>
+<td>10.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">40</td>
+<td>NRK</td>
+<td>NRK</td>
+<td>Q7Z2Y5</td>
+<td>NRK</td>
+<td>STE</td>
+<td>STE20</td>
+<td>MSN</td>
+<td>0.863932</td>
+<td>27.0</td>
+<td>0.945743</td>
+<td>3.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">41</td>
+<td>PDHK3</td>
+<td>PDHK3</td>
+<td>Q15120</td>
+<td>PDK3</td>
+<td>Atypical</td>
+<td>PDHK</td>
+<td>PDHK</td>
+<td>0.676690</td>
+<td>3.0</td>
+<td>0.676690</td>
+<td>3.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">42</td>
+<td>CDK15</td>
+<td>PFTAIRE2</td>
+<td>Q96Q40</td>
+<td>CDK15</td>
+<td>CMGC</td>
+<td>CDK</td>
+<td>PFTAIRE</td>
+<td>0.923265</td>
+<td>17.0</td>
+<td>0.949171</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">44</td>
+<td>CDK11B</td>
+<td>PITSLRE</td>
+<td>P21127</td>
+<td>CDK11B</td>
+<td>CMGC</td>
+<td>CDK</td>
+<td>CDK11</td>
+<td>0.923265</td>
+<td>17.0</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">52</td>
+<td>SBK2</td>
+<td>SgK069</td>
+<td>P0C263</td>
+<td>SBK2</td>
+<td>Other</td>
+<td>NKF1</td>
+<td>NKF1</td>
+<td>0.734262</td>
+<td>1.0</td>
+<td>0.734262</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">53</td>
+<td>SBK3</td>
+<td>SgK110</td>
+<td>P0C264</td>
+<td>SBK3</td>
+<td>Other</td>
+<td>NKF1</td>
+<td>NKF1</td>
+<td>0.734262</td>
+<td>1.0</td>
+<td>0.734262</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">54</td>
+<td>ANKK1</td>
+<td>SgK288</td>
+<td>Q8NFD2</td>
+<td>ANKK1</td>
+<td>TKL</td>
+<td>RIPK</td>
+<td>RIPK</td>
+<td>0.627125</td>
+<td>4.0</td>
+<td>0.627125</td>
+<td>4.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">57</td>
+<td>TESK2</td>
+<td>TESK2</td>
+<td>Q96S53</td>
+<td>TESK2</td>
+<td>TKL</td>
+<td>LISK</td>
+<td>TESK</td>
+<td>0.576401</td>
+<td>3.0</td>
+<td>0.099881</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">61</td>
+<td>TSSK3</td>
+<td>TSSK3</td>
+<td>Q96PN8</td>
+<td>TSSK3</td>
+<td>CAMK</td>
+<td>TSSK</td>
+<td>TSSK</td>
+<td>0.847705</td>
+<td>3.0</td>
+<td>0.847705</td>
+<td>3.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">62</td>
+<td>TSSK4</td>
+<td>TSSK4</td>
+<td>Q6SA08</td>
+<td>TSSK4</td>
+<td>CAMK</td>
+<td>TSSK</td>
+<td>TSSK</td>
+<td>0.847705</td>
+<td>3.0</td>
+<td>0.847705</td>
+<td>3.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">64</td>
+<td>STK32A</td>
+<td>YANK1</td>
+<td>Q8WU08</td>
+<td>STK32A</td>
+<td>AGC</td>
+<td>YANK</td>
+<td>YANK</td>
+<td>0.816684</td>
+<td>2.0</td>
+<td>0.816684</td>
+<td>2.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="6e5dd505-47d2-4f5b-a7d9-8c448359616e" class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># selected = preds_info[preds_info['Pearson_family']&gt;=0.55]\</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># .sort_values('Pearson_family',ascending=False)\</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># .query('group!="TK"')</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># # Remove MAP2K families, as it is potentially contaminated with MAPK families</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co"># selected = selected[~selected.kinase.str.startswith('MAP2')]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cd8c68df-c8a4-44d0-9ce7-7aad1a7204e4" class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(selected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>29</code></pre>
+</div>
+</div>
+<p>To save PSSMs:</p>
+<div id="116eab97-0b58-43ae-917d-457d79bd8f9b" class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>preds_final.index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>Index(['ADCK1', 'ADCK2', 'COQ8A', 'COQ8B', 'ADCK5', 'ACVRL1', 'ACVR1C',
+       'ALPK3', 'ALPK2', 'ARAF', 'CASK', 'CDK20', 'CDKL2', 'CDKL3', 'CDKL4',
+       'STK35', 'PDIK1L', 'DCLK3', 'DDR1', 'CDC42BPG', 'STK17B', 'ERBB2',
+       'MAPK6', 'MAPK4', 'STK36', 'TNNI3K', 'AATK', 'LMTK2', 'LMTK3', 'LRRK1',
+       'MAP3K13', 'MAP2K6', 'MAP3K4', 'MAST1', 'MAST2', 'MAST3', 'MAST4',
+       'AMHR2', 'PKMYT1', 'NEK10', 'NRK', 'CDK15', 'PIK3R4', 'CDK11B', 'PSKH1',
+       'RIOK1', 'RIOK2', 'RIOK3', 'RNASEL', 'ROR1', 'ROR2', 'SBK2', 'SBK3',
+       'ANKK1', 'RSKR', 'SPEG', 'TESK2', 'TIE1', 'KALRN', 'TRIO', 'TSSK3',
+       'TSSK4', 'WEE2', 'STK32A'],
+      dtype='object')</code></pre>
+</div>
+</div>
+<div id="2af71beb-b969-457e-978e-b3f4e4e5ef2d" class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>selected_PSSM <span class="op">=</span> preds_final.loc[selected.kinase]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="44f9985f-7479-4839-bd48-371a7a147519" class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># selected_PSSM.to_csv('source/Supplementary_table3_predicted_PSSM.csv')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="da7ee2cb-94cb-4789-ae7d-48e4738e273c" class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>preds_final</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">substrate</th>
+<th data-quarto-table-cell-role="th">-5P</th>
+<th data-quarto-table-cell-role="th">-5G</th>
+<th data-quarto-table-cell-role="th">-5A</th>
+<th data-quarto-table-cell-role="th">-5C</th>
+<th data-quarto-table-cell-role="th">-5S</th>
+<th data-quarto-table-cell-role="th">-5T</th>
+<th data-quarto-table-cell-role="th">-5V</th>
+<th data-quarto-table-cell-role="th">-5I</th>
+<th data-quarto-table-cell-role="th">-5L</th>
+<th data-quarto-table-cell-role="th">-5M</th>
+<th data-quarto-table-cell-role="th">-5F</th>
+<th data-quarto-table-cell-role="th">-5Y</th>
+<th data-quarto-table-cell-role="th">-5W</th>
+<th data-quarto-table-cell-role="th">-5H</th>
+<th data-quarto-table-cell-role="th">-5K</th>
+<th data-quarto-table-cell-role="th">-5R</th>
+<th data-quarto-table-cell-role="th">-5Q</th>
+<th data-quarto-table-cell-role="th">-5N</th>
+<th data-quarto-table-cell-role="th">-5D</th>
+<th data-quarto-table-cell-role="th">-5E</th>
+<th data-quarto-table-cell-role="th">-5s</th>
+<th data-quarto-table-cell-role="th">-5t</th>
+<th data-quarto-table-cell-role="th">-5y</th>
+<th data-quarto-table-cell-role="th">-4P</th>
+<th data-quarto-table-cell-role="th">-4G</th>
+<th data-quarto-table-cell-role="th">-4A</th>
+<th data-quarto-table-cell-role="th">-4C</th>
+<th data-quarto-table-cell-role="th">-4S</th>
+<th data-quarto-table-cell-role="th">-4T</th>
+<th data-quarto-table-cell-role="th">-4V</th>
+<th data-quarto-table-cell-role="th">-4I</th>
+<th data-quarto-table-cell-role="th">-4L</th>
+<th data-quarto-table-cell-role="th">-4M</th>
+<th data-quarto-table-cell-role="th">-4F</th>
+<th data-quarto-table-cell-role="th">-4Y</th>
+<th data-quarto-table-cell-role="th">-4W</th>
+<th data-quarto-table-cell-role="th">-4H</th>
+<th data-quarto-table-cell-role="th">-4K</th>
+<th data-quarto-table-cell-role="th">-4R</th>
+<th data-quarto-table-cell-role="th">-4Q</th>
+<th data-quarto-table-cell-role="th">-4N</th>
+<th data-quarto-table-cell-role="th">-4D</th>
+<th data-quarto-table-cell-role="th">-4E</th>
+<th data-quarto-table-cell-role="th">-4s</th>
+<th data-quarto-table-cell-role="th">-4t</th>
+<th data-quarto-table-cell-role="th">-4y</th>
+<th data-quarto-table-cell-role="th">-3P</th>
+<th data-quarto-table-cell-role="th">-3G</th>
+<th data-quarto-table-cell-role="th">-3A</th>
+<th data-quarto-table-cell-role="th">-3C</th>
+<th data-quarto-table-cell-role="th">-3S</th>
+<th data-quarto-table-cell-role="th">-3T</th>
+<th data-quarto-table-cell-role="th">-3V</th>
+<th data-quarto-table-cell-role="th">-3I</th>
+<th data-quarto-table-cell-role="th">-3L</th>
+<th data-quarto-table-cell-role="th">-3M</th>
+<th data-quarto-table-cell-role="th">-3F</th>
+<th data-quarto-table-cell-role="th">-3Y</th>
+<th data-quarto-table-cell-role="th">-3W</th>
+<th data-quarto-table-cell-role="th">-3H</th>
+<th data-quarto-table-cell-role="th">-3K</th>
+<th data-quarto-table-cell-role="th">-3R</th>
+<th data-quarto-table-cell-role="th">-3Q</th>
+<th data-quarto-table-cell-role="th">-3N</th>
+<th data-quarto-table-cell-role="th">-3D</th>
+<th data-quarto-table-cell-role="th">-3E</th>
+<th data-quarto-table-cell-role="th">-3s</th>
+<th data-quarto-table-cell-role="th">-3t</th>
+<th data-quarto-table-cell-role="th">-3y</th>
+<th data-quarto-table-cell-role="th">-2P</th>
+<th data-quarto-table-cell-role="th">-2G</th>
+<th data-quarto-table-cell-role="th">-2A</th>
+<th data-quarto-table-cell-role="th">-2C</th>
+<th data-quarto-table-cell-role="th">-2S</th>
+<th data-quarto-table-cell-role="th">-2T</th>
+<th data-quarto-table-cell-role="th">-2V</th>
+<th data-quarto-table-cell-role="th">-2I</th>
+<th data-quarto-table-cell-role="th">-2L</th>
+<th data-quarto-table-cell-role="th">-2M</th>
+<th data-quarto-table-cell-role="th">-2F</th>
+<th data-quarto-table-cell-role="th">-2Y</th>
+<th data-quarto-table-cell-role="th">-2W</th>
+<th data-quarto-table-cell-role="th">-2H</th>
+<th data-quarto-table-cell-role="th">-2K</th>
+<th data-quarto-table-cell-role="th">-2R</th>
+<th data-quarto-table-cell-role="th">-2Q</th>
+<th data-quarto-table-cell-role="th">-2N</th>
+<th data-quarto-table-cell-role="th">-2D</th>
+<th data-quarto-table-cell-role="th">-2E</th>
+<th data-quarto-table-cell-role="th">-2s</th>
+<th data-quarto-table-cell-role="th">-2t</th>
+<th data-quarto-table-cell-role="th">-2y</th>
+<th data-quarto-table-cell-role="th">-1P</th>
+<th data-quarto-table-cell-role="th">-1G</th>
+<th data-quarto-table-cell-role="th">-1A</th>
+<th data-quarto-table-cell-role="th">-1C</th>
+<th data-quarto-table-cell-role="th">-1S</th>
+<th data-quarto-table-cell-role="th">-1T</th>
+<th data-quarto-table-cell-role="th">-1V</th>
+<th data-quarto-table-cell-role="th">-1I</th>
+<th data-quarto-table-cell-role="th">-1L</th>
+<th data-quarto-table-cell-role="th">-1M</th>
+<th data-quarto-table-cell-role="th">-1F</th>
+<th data-quarto-table-cell-role="th">-1Y</th>
+<th data-quarto-table-cell-role="th">-1W</th>
+<th data-quarto-table-cell-role="th">-1H</th>
+<th data-quarto-table-cell-role="th">-1K</th>
+<th data-quarto-table-cell-role="th">-1R</th>
+<th data-quarto-table-cell-role="th">-1Q</th>
+<th data-quarto-table-cell-role="th">-1N</th>
+<th data-quarto-table-cell-role="th">-1D</th>
+<th data-quarto-table-cell-role="th">-1E</th>
+<th data-quarto-table-cell-role="th">-1s</th>
+<th data-quarto-table-cell-role="th">-1t</th>
+<th data-quarto-table-cell-role="th">-1y</th>
+<th data-quarto-table-cell-role="th">1P</th>
+<th data-quarto-table-cell-role="th">1G</th>
+<th data-quarto-table-cell-role="th">1A</th>
+<th data-quarto-table-cell-role="th">1C</th>
+<th data-quarto-table-cell-role="th">1S</th>
+<th data-quarto-table-cell-role="th">1T</th>
+<th data-quarto-table-cell-role="th">1V</th>
+<th data-quarto-table-cell-role="th">1I</th>
+<th data-quarto-table-cell-role="th">1L</th>
+<th data-quarto-table-cell-role="th">1M</th>
+<th data-quarto-table-cell-role="th">1F</th>
+<th data-quarto-table-cell-role="th">1Y</th>
+<th data-quarto-table-cell-role="th">1W</th>
+<th data-quarto-table-cell-role="th">1H</th>
+<th data-quarto-table-cell-role="th">1K</th>
+<th data-quarto-table-cell-role="th">1R</th>
+<th data-quarto-table-cell-role="th">1Q</th>
+<th data-quarto-table-cell-role="th">1N</th>
+<th data-quarto-table-cell-role="th">1D</th>
+<th data-quarto-table-cell-role="th">1E</th>
+<th data-quarto-table-cell-role="th">1s</th>
+<th data-quarto-table-cell-role="th">1t</th>
+<th data-quarto-table-cell-role="th">1y</th>
+<th data-quarto-table-cell-role="th">2P</th>
+<th data-quarto-table-cell-role="th">2G</th>
+<th data-quarto-table-cell-role="th">2A</th>
+<th data-quarto-table-cell-role="th">2C</th>
+<th data-quarto-table-cell-role="th">2S</th>
+<th data-quarto-table-cell-role="th">2T</th>
+<th data-quarto-table-cell-role="th">2V</th>
+<th data-quarto-table-cell-role="th">2I</th>
+<th data-quarto-table-cell-role="th">2L</th>
+<th data-quarto-table-cell-role="th">2M</th>
+<th data-quarto-table-cell-role="th">2F</th>
+<th data-quarto-table-cell-role="th">2Y</th>
+<th data-quarto-table-cell-role="th">2W</th>
+<th data-quarto-table-cell-role="th">2H</th>
+<th data-quarto-table-cell-role="th">2K</th>
+<th data-quarto-table-cell-role="th">2R</th>
+<th data-quarto-table-cell-role="th">2Q</th>
+<th data-quarto-table-cell-role="th">2N</th>
+<th data-quarto-table-cell-role="th">2D</th>
+<th data-quarto-table-cell-role="th">2E</th>
+<th data-quarto-table-cell-role="th">2s</th>
+<th data-quarto-table-cell-role="th">2t</th>
+<th data-quarto-table-cell-role="th">2y</th>
+<th data-quarto-table-cell-role="th">3P</th>
+<th data-quarto-table-cell-role="th">3G</th>
+<th data-quarto-table-cell-role="th">3A</th>
+<th data-quarto-table-cell-role="th">3C</th>
+<th data-quarto-table-cell-role="th">3S</th>
+<th data-quarto-table-cell-role="th">3T</th>
+<th data-quarto-table-cell-role="th">3V</th>
+<th data-quarto-table-cell-role="th">3I</th>
+<th data-quarto-table-cell-role="th">3L</th>
+<th data-quarto-table-cell-role="th">3M</th>
+<th data-quarto-table-cell-role="th">3F</th>
+<th data-quarto-table-cell-role="th">3Y</th>
+<th data-quarto-table-cell-role="th">3W</th>
+<th data-quarto-table-cell-role="th">3H</th>
+<th data-quarto-table-cell-role="th">3K</th>
+<th data-quarto-table-cell-role="th">3R</th>
+<th data-quarto-table-cell-role="th">3Q</th>
+<th data-quarto-table-cell-role="th">3N</th>
+<th data-quarto-table-cell-role="th">3D</th>
+<th data-quarto-table-cell-role="th">3E</th>
+<th data-quarto-table-cell-role="th">3s</th>
+<th data-quarto-table-cell-role="th">3t</th>
+<th data-quarto-table-cell-role="th">3y</th>
+<th data-quarto-table-cell-role="th">4P</th>
+<th data-quarto-table-cell-role="th">4G</th>
+<th data-quarto-table-cell-role="th">4A</th>
+<th data-quarto-table-cell-role="th">4C</th>
+<th data-quarto-table-cell-role="th">4S</th>
+<th data-quarto-table-cell-role="th">4T</th>
+<th data-quarto-table-cell-role="th">4V</th>
+<th data-quarto-table-cell-role="th">4I</th>
+<th data-quarto-table-cell-role="th">4L</th>
+<th data-quarto-table-cell-role="th">4M</th>
+<th data-quarto-table-cell-role="th">4F</th>
+<th data-quarto-table-cell-role="th">4Y</th>
+<th data-quarto-table-cell-role="th">4W</th>
+<th data-quarto-table-cell-role="th">4H</th>
+<th data-quarto-table-cell-role="th">4K</th>
+<th data-quarto-table-cell-role="th">4R</th>
+<th data-quarto-table-cell-role="th">4Q</th>
+<th data-quarto-table-cell-role="th">4N</th>
+<th data-quarto-table-cell-role="th">4D</th>
+<th data-quarto-table-cell-role="th">4E</th>
+<th data-quarto-table-cell-role="th">4s</th>
+<th data-quarto-table-cell-role="th">4t</th>
+<th data-quarto-table-cell-role="th">4y</th>
+<th data-quarto-table-cell-role="th">0s</th>
+<th data-quarto-table-cell-role="th">0t</th>
+<th data-quarto-table-cell-role="th">0y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">ADCK1</td>
+<td>0.048353</td>
+<td>0.044662</td>
+<td>0.049684</td>
+<td>0.047756</td>
+<td>0.039644</td>
+<td>0.038732</td>
+<td>0.041271</td>
+<td>0.037347</td>
+<td>0.041508</td>
+<td>0.038331</td>
+<td>0.053608</td>
+<td>0.049934</td>
+<td>0.062422</td>
+<td>0.053521</td>
+<td>0.049245</td>
+<td>0.060374</td>
+<td>0.029276</td>
+<td>0.031936</td>
+<td>0.034305</td>
+<td>0.029565</td>
+<td>0.038343</td>
+<td>0.035231</td>
+<td>0.044951</td>
+<td>0.044934</td>
+<td>0.055889</td>
+<td>0.053259</td>
+<td>0.051039</td>
+<td>0.040561</td>
+<td>0.039071</td>
+<td>0.029120</td>
+<td>0.026485</td>
+<td>0.032313</td>
+<td>0.043253</td>
+<td>0.043563</td>
+<td>0.045449</td>
+<td>0.055382</td>
+<td>0.051374</td>
+<td>0.051370</td>
+<td>0.058486</td>
+<td>0.042473</td>
+<td>0.033350</td>
+<td>0.037059</td>
+<td>0.042023</td>
+<td>0.037581</td>
+<td>0.039726</td>
+<td>0.046240</td>
+<td>0.045317</td>
+<td>0.043955</td>
+<td>0.041623</td>
+<td>0.038439</td>
+<td>0.031459</td>
+<td>0.036182</td>
+<td>0.017883</td>
+<td>0.025107</td>
+<td>0.028089</td>
+<td>0.039873</td>
+<td>0.038124</td>
+<td>0.047898</td>
+<td>0.048998</td>
+<td>0.048629</td>
+<td>0.060935</td>
+<td>0.169430</td>
+<td>0.039727</td>
+<td>0.039115</td>
+<td>0.027784</td>
+<td>0.027859</td>
+<td>0.026473</td>
+<td>0.025607</td>
+<td>0.051496</td>
+<td>0.052765</td>
+<td>0.066532</td>
+<td>0.069552</td>
+<td>0.057155</td>
+<td>0.035952</td>
+<td>0.036574</td>
+<td>0.029716</td>
+<td>0.024590</td>
+<td>0.024692</td>
+<td>0.044897</td>
+<td>0.037173</td>
+<td>0.038102</td>
+<td>0.036595</td>
+<td>0.045834</td>
+<td>0.042720</td>
+<td>0.070292</td>
+<td>0.053697</td>
+<td>0.044977</td>
+<td>0.034447</td>
+<td>0.035987</td>
+<td>0.033721</td>
+<td>0.033731</td>
+<td>0.050301</td>
+<td>0.050042</td>
+<td>0.068772</td>
+<td>0.047273</td>
+<td>0.037983</td>
+<td>0.037060</td>
+<td>0.039980</td>
+<td>0.016494</td>
+<td>0.016991</td>
+<td>0.048666</td>
+<td>0.050307</td>
+<td>0.035136</td>
+<td>0.047393</td>
+<td>0.021929</td>
+<td>0.049534</td>
+<td>0.049586</td>
+<td>0.067902</td>
+<td>0.043523</td>
+<td>0.063060</td>
+<td>0.035749</td>
+<td>0.029079</td>
+<td>0.014841</td>
+<td>0.017725</td>
+<td>0.110975</td>
+<td>0.037987</td>
+<td>0.036425</td>
+<td>0.031539</td>
+<td>0.035683</td>
+<td>0.029945</td>
+<td>0.028544</td>
+<td>0.049934</td>
+<td>0.052586</td>
+<td>0.064842</td>
+<td>0.065427</td>
+<td>0.068493</td>
+<td>0.070078</td>
+<td>0.055551</td>
+<td>0.037420</td>
+<td>0.034944</td>
+<td>0.041709</td>
+<td>0.127522</td>
+<td>0.034614</td>
+<td>0.011865</td>
+<td>0.012881</td>
+<td>0.019960</td>
+<td>0.019043</td>
+<td>0.033009</td>
+<td>0.038021</td>
+<td>0.037081</td>
+<td>0.045470</td>
+<td>0.044291</td>
+<td>0.037363</td>
+<td>0.037934</td>
+<td>0.032741</td>
+<td>0.023745</td>
+<td>0.026896</td>
+<td>0.036136</td>
+<td>0.043042</td>
+<td>0.064908</td>
+<td>0.042939</td>
+<td>0.073471</td>
+<td>0.058376</td>
+<td>0.082958</td>
+<td>0.044870</td>
+<td>0.047893</td>
+<td>0.049456</td>
+<td>0.037746</td>
+<td>0.036087</td>
+<td>0.036824</td>
+<td>0.021754</td>
+<td>0.048246</td>
+<td>0.052635</td>
+<td>0.044155</td>
+<td>0.047448</td>
+<td>0.037878</td>
+<td>0.042588</td>
+<td>0.030934</td>
+<td>0.027071</td>
+<td>0.034234</td>
+<td>0.036288</td>
+<td>0.040991</td>
+<td>0.053992</td>
+<td>0.051278</td>
+<td>0.051650</td>
+<td>0.056384</td>
+<td>0.083639</td>
+<td>0.037271</td>
+<td>0.044311</td>
+<td>0.040318</td>
+<td>0.036551</td>
+<td>0.032791</td>
+<td>0.030228</td>
+<td>0.039123</td>
+<td>0.044532</td>
+<td>0.046071</td>
+<td>0.034738</td>
+<td>0.039499</td>
+<td>0.041556</td>
+<td>0.039789</td>
+<td>0.026431</td>
+<td>0.034100</td>
+<td>0.032969</td>
+<td>0.039661</td>
+<td>0.043047</td>
+<td>0.048863</td>
+<td>0.067794</td>
+<td>0.052228</td>
+<td>0.059207</td>
+<td>0.054760</td>
+<td>0.044493</td>
+<td>0.039064</td>
+<td>0.038197</td>
+<td>0.039430</td>
+<td>0.044199</td>
+<td>0.045629</td>
+<td>0.043743</td>
+<td>0.592792</td>
+<td>0.407208</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">ADCK2</td>
+<td>0.045721</td>
+<td>0.039397</td>
+<td>0.046075</td>
+<td>0.048963</td>
+<td>0.039347</td>
+<td>0.039411</td>
+<td>0.037317</td>
+<td>0.039063</td>
+<td>0.038259</td>
+<td>0.038223</td>
+<td>0.050568</td>
+<td>0.046183</td>
+<td>0.060257</td>
+<td>0.053303</td>
+<td>0.053477</td>
+<td>0.059690</td>
+<td>0.032951</td>
+<td>0.037253</td>
+<td>0.037623</td>
+<td>0.035300</td>
+<td>0.040233</td>
+<td>0.038882</td>
+<td>0.042505</td>
+<td>0.038253</td>
+<td>0.046895</td>
+<td>0.046298</td>
+<td>0.050421</td>
+<td>0.040807</td>
+<td>0.040307</td>
+<td>0.026036</td>
+<td>0.026761</td>
+<td>0.031410</td>
+<td>0.040487</td>
+<td>0.041790</td>
+<td>0.049121</td>
+<td>0.067160</td>
+<td>0.053791</td>
+<td>0.054370</td>
+<td>0.057504</td>
+<td>0.040842</td>
+<td>0.038828</td>
+<td>0.038541</td>
+<td>0.046431</td>
+<td>0.037180</td>
+<td>0.038448</td>
+<td>0.048320</td>
+<td>0.029899</td>
+<td>0.032401</td>
+<td>0.036139</td>
+<td>0.042894</td>
+<td>0.034648</td>
+<td>0.035971</td>
+<td>0.016074</td>
+<td>0.024989</td>
+<td>0.037466</td>
+<td>0.050001</td>
+<td>0.041506</td>
+<td>0.051284</td>
+<td>0.054756</td>
+<td>0.047511</td>
+<td>0.055568</td>
+<td>0.170383</td>
+<td>0.034518</td>
+<td>0.033387</td>
+<td>0.029179</td>
+<td>0.024037</td>
+<td>0.028684</td>
+<td>0.028524</td>
+<td>0.060181</td>
+<td>0.037890</td>
+<td>0.045830</td>
+<td>0.057961</td>
+<td>0.060794</td>
+<td>0.037078</td>
+<td>0.037156</td>
+<td>0.029906</td>
+<td>0.035417</td>
+<td>0.040394</td>
+<td>0.069018</td>
+<td>0.050424</td>
+<td>0.050308</td>
+<td>0.056359</td>
+<td>0.049178</td>
+<td>0.036979</td>
+<td>0.050035</td>
+<td>0.047813</td>
+<td>0.034787</td>
+<td>0.024446</td>
+<td>0.031328</td>
+<td>0.033462</td>
+<td>0.036423</td>
+<td>0.047013</td>
+<td>0.044032</td>
+<td>0.054508</td>
+<td>0.044736</td>
+<td>0.038589</td>
+<td>0.038306</td>
+<td>0.039960</td>
+<td>0.019210</td>
+<td>0.015471</td>
+<td>0.043412</td>
+<td>0.050007</td>
+<td>0.032492</td>
+<td>0.046547</td>
+<td>0.028663</td>
+<td>0.048846</td>
+<td>0.062203</td>
+<td>0.079447</td>
+<td>0.049108</td>
+<td>0.061290</td>
+<td>0.034761</td>
+<td>0.033345</td>
+<td>0.013798</td>
+<td>0.020700</td>
+<td>0.100570</td>
+<td>0.072016</td>
+<td>0.052588</td>
+<td>0.035022</td>
+<td>0.042979</td>
+<td>0.032550</td>
+<td>0.032083</td>
+<td>0.033524</td>
+<td>0.041327</td>
+<td>0.041449</td>
+<td>0.056695</td>
+<td>0.059243</td>
+<td>0.057737</td>
+<td>0.045298</td>
+<td>0.040674</td>
+<td>0.053588</td>
+<td>0.058783</td>
+<td>0.066609</td>
+<td>0.050871</td>
+<td>0.016541</td>
+<td>0.022681</td>
+<td>0.025931</td>
+<td>0.025844</td>
+<td>0.035966</td>
+<td>0.043190</td>
+<td>0.031350</td>
+<td>0.040698</td>
+<td>0.040927</td>
+<td>0.039169</td>
+<td>0.039970</td>
+<td>0.029137</td>
+<td>0.024877</td>
+<td>0.024263</td>
+<td>0.038165</td>
+<td>0.042098</td>
+<td>0.061697</td>
+<td>0.048007</td>
+<td>0.071997</td>
+<td>0.060763</td>
+<td>0.092504</td>
+<td>0.040901</td>
+<td>0.046491</td>
+<td>0.033582</td>
+<td>0.031696</td>
+<td>0.036643</td>
+<td>0.036539</td>
+<td>0.045335</td>
+<td>0.044955</td>
+<td>0.046267</td>
+<td>0.038843</td>
+<td>0.048163</td>
+<td>0.041402</td>
+<td>0.042168</td>
+<td>0.028033</td>
+<td>0.027368</td>
+<td>0.029552</td>
+<td>0.039374</td>
+<td>0.043419</td>
+<td>0.057464</td>
+<td>0.053689</td>
+<td>0.051217</td>
+<td>0.066311</td>
+<td>0.101883</td>
+<td>0.038626</td>
+<td>0.047659</td>
+<td>0.030986</td>
+<td>0.022662</td>
+<td>0.028900</td>
+<td>0.029022</td>
+<td>0.042037</td>
+<td>0.049299</td>
+<td>0.041710</td>
+<td>0.031999</td>
+<td>0.042755</td>
+<td>0.043463</td>
+<td>0.042232</td>
+<td>0.027886</td>
+<td>0.036487</td>
+<td>0.037486</td>
+<td>0.038706</td>
+<td>0.039611</td>
+<td>0.049975</td>
+<td>0.063763</td>
+<td>0.052915</td>
+<td>0.062923</td>
+<td>0.064993</td>
+<td>0.048762</td>
+<td>0.040808</td>
+<td>0.032854</td>
+<td>0.029899</td>
+<td>0.040699</td>
+<td>0.041583</td>
+<td>0.039191</td>
+<td>0.550779</td>
+<td>0.449222</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">COQ8A</td>
+<td>0.047078</td>
+<td>0.049584</td>
+<td>0.046538</td>
+<td>0.046978</td>
+<td>0.038505</td>
+<td>0.039265</td>
+<td>0.038297</td>
+<td>0.027514</td>
+<td>0.025965</td>
+<td>0.034214</td>
+<td>0.046496</td>
+<td>0.053125</td>
+<td>0.061218</td>
+<td>0.063530</td>
+<td>0.050068</td>
+<td>0.057296</td>
+<td>0.030144</td>
+<td>0.036608</td>
+<td>0.041208</td>
+<td>0.034382</td>
+<td>0.040725</td>
+<td>0.038488</td>
+<td>0.052773</td>
+<td>0.051598</td>
+<td>0.054722</td>
+<td>0.051946</td>
+<td>0.053349</td>
+<td>0.041256</td>
+<td>0.040011</td>
+<td>0.028248</td>
+<td>0.022370</td>
+<td>0.025431</td>
+<td>0.038975</td>
+<td>0.042358</td>
+<td>0.047993</td>
+<td>0.058613</td>
+<td>0.053117</td>
+<td>0.044062</td>
+<td>0.050123</td>
+<td>0.041462</td>
+<td>0.035505</td>
+<td>0.039927</td>
+<td>0.042196</td>
+<td>0.040626</td>
+<td>0.042263</td>
+<td>0.053851</td>
+<td>0.047354</td>
+<td>0.044989</td>
+<td>0.042722</td>
+<td>0.043670</td>
+<td>0.036494</td>
+<td>0.039349</td>
+<td>0.019971</td>
+<td>0.025216</td>
+<td>0.025044</td>
+<td>0.042077</td>
+<td>0.042146</td>
+<td>0.052869</td>
+<td>0.057933</td>
+<td>0.045585</td>
+<td>0.046349</td>
+<td>0.114434</td>
+<td>0.041640</td>
+<td>0.040620</td>
+<td>0.037419</td>
+<td>0.036016</td>
+<td>0.028373</td>
+<td>0.029125</td>
+<td>0.060607</td>
+<td>0.053200</td>
+<td>0.076206</td>
+<td>0.065363</td>
+<td>0.053134</td>
+<td>0.034243</td>
+<td>0.035309</td>
+<td>0.027042</td>
+<td>0.027100</td>
+<td>0.026685</td>
+<td>0.040070</td>
+<td>0.041957</td>
+<td>0.044627</td>
+<td>0.037925</td>
+<td>0.047342</td>
+<td>0.033303</td>
+<td>0.061909</td>
+<td>0.042819</td>
+<td>0.042647</td>
+<td>0.039713</td>
+<td>0.036886</td>
+<td>0.035117</td>
+<td>0.037581</td>
+<td>0.059822</td>
+<td>0.046798</td>
+<td>0.075342</td>
+<td>0.045890</td>
+<td>0.037855</td>
+<td>0.035734</td>
+<td>0.039024</td>
+<td>0.015485</td>
+<td>0.014795</td>
+<td>0.051195</td>
+<td>0.048579</td>
+<td>0.034145</td>
+<td>0.045877</td>
+<td>0.022837</td>
+<td>0.045838</td>
+<td>0.046570</td>
+<td>0.062046</td>
+<td>0.037391</td>
+<td>0.058346</td>
+<td>0.035356</td>
+<td>0.024353</td>
+<td>0.018455</td>
+<td>0.018843</td>
+<td>0.139246</td>
+<td>0.046620</td>
+<td>0.029290</td>
+<td>0.026538</td>
+<td>0.029174</td>
+<td>0.029126</td>
+<td>0.030876</td>
+<td>0.048084</td>
+<td>0.055013</td>
+<td>0.066582</td>
+<td>0.067302</td>
+<td>0.064741</td>
+<td>0.074518</td>
+<td>0.062068</td>
+<td>0.035251</td>
+<td>0.038081</td>
+<td>0.038229</td>
+<td>0.112505</td>
+<td>0.026391</td>
+<td>0.011765</td>
+<td>0.018384</td>
+<td>0.024527</td>
+<td>0.025697</td>
+<td>0.039235</td>
+<td>0.034462</td>
+<td>0.038124</td>
+<td>0.039552</td>
+<td>0.039801</td>
+<td>0.034877</td>
+<td>0.035696</td>
+<td>0.030061</td>
+<td>0.021655</td>
+<td>0.026670</td>
+<td>0.038152</td>
+<td>0.040993</td>
+<td>0.065945</td>
+<td>0.040576</td>
+<td>0.082912</td>
+<td>0.063481</td>
+<td>0.080361</td>
+<td>0.041272</td>
+<td>0.043819</td>
+<td>0.047356</td>
+<td>0.041445</td>
+<td>0.042968</td>
+<td>0.042554</td>
+<td>0.027267</td>
+<td>0.047743</td>
+<td>0.054207</td>
+<td>0.042449</td>
+<td>0.043962</td>
+<td>0.038254</td>
+<td>0.039598</td>
+<td>0.027100</td>
+<td>0.024370</td>
+<td>0.032305</td>
+<td>0.036350</td>
+<td>0.039941</td>
+<td>0.054749</td>
+<td>0.049598</td>
+<td>0.049072</td>
+<td>0.061979</td>
+<td>0.091424</td>
+<td>0.034625</td>
+<td>0.039491</td>
+<td>0.038573</td>
+<td>0.036898</td>
+<td>0.037693</td>
+<td>0.037084</td>
+<td>0.042537</td>
+<td>0.040794</td>
+<td>0.048981</td>
+<td>0.034644</td>
+<td>0.042590</td>
+<td>0.041290</td>
+<td>0.038335</td>
+<td>0.021906</td>
+<td>0.022611</td>
+<td>0.024033</td>
+<td>0.032745</td>
+<td>0.038359</td>
+<td>0.051069</td>
+<td>0.071394</td>
+<td>0.053739</td>
+<td>0.060517</td>
+<td>0.056973</td>
+<td>0.045843</td>
+<td>0.038744</td>
+<td>0.041111</td>
+<td>0.042403</td>
+<td>0.050887</td>
+<td>0.051535</td>
+<td>0.049496</td>
+<td>0.531098</td>
+<td>0.468902</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">COQ8B</td>
+<td>0.046490</td>
+<td>0.047984</td>
+<td>0.047754</td>
+<td>0.047483</td>
+<td>0.039761</td>
+<td>0.038309</td>
+<td>0.038994</td>
+<td>0.028313</td>
+<td>0.026969</td>
+<td>0.035838</td>
+<td>0.042184</td>
+<td>0.050925</td>
+<td>0.056083</td>
+<td>0.059763</td>
+<td>0.058692</td>
+<td>0.067034</td>
+<td>0.035713</td>
+<td>0.038473</td>
+<td>0.037042</td>
+<td>0.033089</td>
+<td>0.039843</td>
+<td>0.037535</td>
+<td>0.045730</td>
+<td>0.051322</td>
+<td>0.054295</td>
+<td>0.053244</td>
+<td>0.051641</td>
+<td>0.041342</td>
+<td>0.041967</td>
+<td>0.029125</td>
+<td>0.021728</td>
+<td>0.025911</td>
+<td>0.040115</td>
+<td>0.038629</td>
+<td>0.046331</td>
+<td>0.054629</td>
+<td>0.053792</td>
+<td>0.050985</td>
+<td>0.055641</td>
+<td>0.042761</td>
+<td>0.040816</td>
+<td>0.036494</td>
+<td>0.041124</td>
+<td>0.036740</td>
+<td>0.040735</td>
+<td>0.050634</td>
+<td>0.049042</td>
+<td>0.048814</td>
+<td>0.042762</td>
+<td>0.043352</td>
+<td>0.036251</td>
+<td>0.038490</td>
+<td>0.021945</td>
+<td>0.025510</td>
+<td>0.028467</td>
+<td>0.042587</td>
+<td>0.040218</td>
+<td>0.053032</td>
+<td>0.054805</td>
+<td>0.047075</td>
+<td>0.046827</td>
+<td>0.114656</td>
+<td>0.045907</td>
+<td>0.040083</td>
+<td>0.032092</td>
+<td>0.036369</td>
+<td>0.024304</td>
+<td>0.026974</td>
+<td>0.060437</td>
+<td>0.060197</td>
+<td>0.071454</td>
+<td>0.059700</td>
+<td>0.054718</td>
+<td>0.034807</td>
+<td>0.035518</td>
+<td>0.032697</td>
+<td>0.033934</td>
+<td>0.035685</td>
+<td>0.047181</td>
+<td>0.039248</td>
+<td>0.044588</td>
+<td>0.038767</td>
+<td>0.050232</td>
+<td>0.038700</td>
+<td>0.068320</td>
+<td>0.041183</td>
+<td>0.041750</td>
+<td>0.023728</td>
+<td>0.025068</td>
+<td>0.031471</td>
+<td>0.034198</td>
+<td>0.056857</td>
+<td>0.051250</td>
+<td>0.067170</td>
+<td>0.048648</td>
+<td>0.041807</td>
+<td>0.037135</td>
+<td>0.038623</td>
+<td>0.021044</td>
+<td>0.016097</td>
+<td>0.047293</td>
+<td>0.047487</td>
+<td>0.034862</td>
+<td>0.050749</td>
+<td>0.028458</td>
+<td>0.049276</td>
+<td>0.042625</td>
+<td>0.061439</td>
+<td>0.040653</td>
+<td>0.058289</td>
+<td>0.032244</td>
+<td>0.027185</td>
+<td>0.016145</td>
+<td>0.017861</td>
+<td>0.123662</td>
+<td>0.046231</td>
+<td>0.054320</td>
+<td>0.043225</td>
+<td>0.038327</td>
+<td>0.030678</td>
+<td>0.031225</td>
+<td>0.046657</td>
+<td>0.043060</td>
+<td>0.056026</td>
+<td>0.058741</td>
+<td>0.052604</td>
+<td>0.066302</td>
+<td>0.053787</td>
+<td>0.042357</td>
+<td>0.047298</td>
+<td>0.056374</td>
+<td>0.094522</td>
+<td>0.036503</td>
+<td>0.008882</td>
+<td>0.015888</td>
+<td>0.021940</td>
+<td>0.022703</td>
+<td>0.032349</td>
+<td>0.029345</td>
+<td>0.034197</td>
+<td>0.032630</td>
+<td>0.038210</td>
+<td>0.034895</td>
+<td>0.035072</td>
+<td>0.030126</td>
+<td>0.023677</td>
+<td>0.031024</td>
+<td>0.040142</td>
+<td>0.041913</td>
+<td>0.070701</td>
+<td>0.045380</td>
+<td>0.071101</td>
+<td>0.067837</td>
+<td>0.097443</td>
+<td>0.043714</td>
+<td>0.038530</td>
+<td>0.037926</td>
+<td>0.041200</td>
+<td>0.035452</td>
+<td>0.036403</td>
+<td>0.043080</td>
+<td>0.041556</td>
+<td>0.047100</td>
+<td>0.040494</td>
+<td>0.044526</td>
+<td>0.039906</td>
+<td>0.041232</td>
+<td>0.029107</td>
+<td>0.027733</td>
+<td>0.036204</td>
+<td>0.038227</td>
+<td>0.043508</td>
+<td>0.057160</td>
+<td>0.051152</td>
+<td>0.049759</td>
+<td>0.061597</td>
+<td>0.099651</td>
+<td>0.036943</td>
+<td>0.038938</td>
+<td>0.035402</td>
+<td>0.032446</td>
+<td>0.032767</td>
+<td>0.032437</td>
+<td>0.042155</td>
+<td>0.041628</td>
+<td>0.047614</td>
+<td>0.034308</td>
+<td>0.043401</td>
+<td>0.041791</td>
+<td>0.039117</td>
+<td>0.026839</td>
+<td>0.029370</td>
+<td>0.025726</td>
+<td>0.033912</td>
+<td>0.039222</td>
+<td>0.050926</td>
+<td>0.066690</td>
+<td>0.053031</td>
+<td>0.066319</td>
+<td>0.065283</td>
+<td>0.047686</td>
+<td>0.037915</td>
+<td>0.035601</td>
+<td>0.037493</td>
+<td>0.046414</td>
+<td>0.044682</td>
+<td>0.045031</td>
+<td>0.536430</td>
+<td>0.463570</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">ADCK5</td>
+<td>0.049543</td>
+<td>0.047891</td>
+<td>0.053344</td>
+<td>0.047442</td>
+<td>0.039538</td>
+<td>0.039139</td>
+<td>0.037515</td>
+<td>0.030666</td>
+<td>0.034010</td>
+<td>0.034438</td>
+<td>0.048031</td>
+<td>0.047656</td>
+<td>0.058163</td>
+<td>0.057253</td>
+<td>0.053287</td>
+<td>0.060471</td>
+<td>0.032071</td>
+<td>0.034439</td>
+<td>0.040639</td>
+<td>0.036601</td>
+<td>0.039099</td>
+<td>0.036382</td>
+<td>0.042382</td>
+<td>0.046010</td>
+<td>0.055103</td>
+<td>0.051187</td>
+<td>0.048136</td>
+<td>0.040229</td>
+<td>0.039656</td>
+<td>0.026984</td>
+<td>0.025265</td>
+<td>0.029893</td>
+<td>0.040407</td>
+<td>0.040468</td>
+<td>0.048090</td>
+<td>0.060049</td>
+<td>0.052049</td>
+<td>0.046587</td>
+<td>0.056406</td>
+<td>0.040163</td>
+<td>0.036351</td>
+<td>0.042446</td>
+<td>0.047558</td>
+<td>0.037579</td>
+<td>0.038367</td>
+<td>0.051016</td>
+<td>0.044579</td>
+<td>0.041849</td>
+<td>0.043394</td>
+<td>0.040439</td>
+<td>0.034076</td>
+<td>0.037129</td>
+<td>0.020297</td>
+<td>0.029052</td>
+<td>0.041045</td>
+<td>0.045282</td>
+<td>0.043976</td>
+<td>0.054678</td>
+<td>0.053243</td>
+<td>0.049444</td>
+<td>0.054603</td>
+<td>0.134756</td>
+<td>0.039868</td>
+<td>0.034255</td>
+<td>0.029839</td>
+<td>0.030173</td>
+<td>0.018328</td>
+<td>0.019532</td>
+<td>0.060163</td>
+<td>0.056545</td>
+<td>0.062542</td>
+<td>0.064457</td>
+<td>0.056482</td>
+<td>0.034845</td>
+<td>0.037462</td>
+<td>0.032346</td>
+<td>0.032776</td>
+<td>0.029499</td>
+<td>0.049168</td>
+<td>0.035670</td>
+<td>0.039854</td>
+<td>0.036803</td>
+<td>0.045590</td>
+<td>0.041027</td>
+<td>0.082523</td>
+<td>0.049648</td>
+<td>0.044459</td>
+<td>0.029937</td>
+<td>0.032879</td>
+<td>0.031460</td>
+<td>0.031788</td>
+<td>0.042241</td>
+<td>0.047725</td>
+<td>0.070456</td>
+<td>0.052987</td>
+<td>0.044120</td>
+<td>0.038745</td>
+<td>0.038989</td>
+<td>0.015254</td>
+<td>0.011927</td>
+<td>0.052403</td>
+<td>0.050014</td>
+<td>0.032129</td>
+<td>0.047100</td>
+<td>0.022718</td>
+<td>0.048942</td>
+<td>0.046519</td>
+<td>0.058769</td>
+<td>0.051422</td>
+<td>0.066435</td>
+<td>0.038945</td>
+<td>0.036135</td>
+<td>0.013666</td>
+<td>0.014764</td>
+<td>0.099837</td>
+<td>0.045244</td>
+<td>0.049914</td>
+<td>0.037949</td>
+<td>0.042928</td>
+<td>0.029092</td>
+<td>0.027040</td>
+<td>0.041000</td>
+<td>0.035742</td>
+<td>0.057063</td>
+<td>0.056079</td>
+<td>0.054661</td>
+<td>0.061901</td>
+<td>0.043877</td>
+<td>0.037606</td>
+<td>0.036988</td>
+<td>0.051406</td>
+<td>0.169357</td>
+<td>0.047310</td>
+<td>0.009869</td>
+<td>0.010754</td>
+<td>0.014510</td>
+<td>0.013932</td>
+<td>0.025780</td>
+<td>0.038718</td>
+<td>0.032160</td>
+<td>0.044575</td>
+<td>0.038416</td>
+<td>0.034899</td>
+<td>0.037351</td>
+<td>0.027102</td>
+<td>0.018443</td>
+<td>0.025340</td>
+<td>0.031271</td>
+<td>0.037153</td>
+<td>0.059982</td>
+<td>0.038112</td>
+<td>0.062765</td>
+<td>0.059484</td>
+<td>0.095888</td>
+<td>0.045951</td>
+<td>0.041892</td>
+<td>0.058679</td>
+<td>0.054161</td>
+<td>0.039517</td>
+<td>0.042078</td>
+<td>0.036063</td>
+<td>0.048144</td>
+<td>0.047688</td>
+<td>0.042921</td>
+<td>0.045241</td>
+<td>0.038341</td>
+<td>0.041129</td>
+<td>0.033237</td>
+<td>0.028478</td>
+<td>0.038002</td>
+<td>0.035906</td>
+<td>0.040726</td>
+<td>0.050294</td>
+<td>0.049203</td>
+<td>0.046171</td>
+<td>0.055096</td>
+<td>0.084852</td>
+<td>0.038221</td>
+<td>0.040089</td>
+<td>0.041478</td>
+<td>0.039187</td>
+<td>0.038181</td>
+<td>0.036559</td>
+<td>0.040855</td>
+<td>0.048178</td>
+<td>0.046452</td>
+<td>0.036643</td>
+<td>0.039390</td>
+<td>0.041241</td>
+<td>0.039432</td>
+<td>0.028720</td>
+<td>0.033507</td>
+<td>0.033618</td>
+<td>0.036911</td>
+<td>0.042227</td>
+<td>0.047590</td>
+<td>0.065330</td>
+<td>0.048556</td>
+<td>0.058778</td>
+<td>0.057889</td>
+<td>0.044317</td>
+<td>0.036743</td>
+<td>0.036225</td>
+<td>0.038623</td>
+<td>0.047162</td>
+<td>0.046304</td>
+<td>0.046163</td>
+<td>0.589432</td>
+<td>0.410568</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">TRIO</td>
+<td>0.049070</td>
+<td>0.047619</td>
+<td>0.050919</td>
+<td>0.036940</td>
+<td>0.039468</td>
+<td>0.036601</td>
+<td>0.037051</td>
+<td>0.039088</td>
+<td>0.055922</td>
+<td>0.033747</td>
+<td>0.037797</td>
+<td>0.037885</td>
+<td>0.040365</td>
+<td>0.047620</td>
+<td>0.089619</td>
+<td>0.104386</td>
+<td>0.035882</td>
+<td>0.035138</td>
+<td>0.027533</td>
+<td>0.026947</td>
+<td>0.029696</td>
+<td>0.027546</td>
+<td>0.033160</td>
+<td>0.040242</td>
+<td>0.054292</td>
+<td>0.049277</td>
+<td>0.036617</td>
+<td>0.038336</td>
+<td>0.036097</td>
+<td>0.032922</td>
+<td>0.029114</td>
+<td>0.039965</td>
+<td>0.034677</td>
+<td>0.033214</td>
+<td>0.033950</td>
+<td>0.051522</td>
+<td>0.042696</td>
+<td>0.086770</td>
+<td>0.096365</td>
+<td>0.040047</td>
+<td>0.039212</td>
+<td>0.031899</td>
+<td>0.046810</td>
+<td>0.039532</td>
+<td>0.033757</td>
+<td>0.032687</td>
+<td>0.040588</td>
+<td>0.046487</td>
+<td>0.041025</td>
+<td>0.035235</td>
+<td>0.024366</td>
+<td>0.022327</td>
+<td>0.015677</td>
+<td>0.015624</td>
+<td>0.027098</td>
+<td>0.021550</td>
+<td>0.015253</td>
+<td>0.022121</td>
+<td>0.028663</td>
+<td>0.042066</td>
+<td>0.110473</td>
+<td>0.274714</td>
+<td>0.042374</td>
+<td>0.026190</td>
+<td>0.018635</td>
+<td>0.025052</td>
+<td>0.039983</td>
+<td>0.032963</td>
+<td>0.031535</td>
+<td>0.039414</td>
+<td>0.053819</td>
+<td>0.059979</td>
+<td>0.051875</td>
+<td>0.030931</td>
+<td>0.028657</td>
+<td>0.028994</td>
+<td>0.020251</td>
+<td>0.031121</td>
+<td>0.028722</td>
+<td>0.026451</td>
+<td>0.028520</td>
+<td>0.038303</td>
+<td>0.052640</td>
+<td>0.077293</td>
+<td>0.169409</td>
+<td>0.053991</td>
+<td>0.044506</td>
+<td>0.015306</td>
+<td>0.026811</td>
+<td>0.034840</td>
+<td>0.028631</td>
+<td>0.029538</td>
+<td>0.059929</td>
+<td>0.060988</td>
+<td>0.043823</td>
+<td>0.031445</td>
+<td>0.038540</td>
+<td>0.034964</td>
+<td>0.027002</td>
+<td>0.015795</td>
+<td>0.052652</td>
+<td>0.040019</td>
+<td>0.031302</td>
+<td>0.043654</td>
+<td>0.020271</td>
+<td>0.052015</td>
+<td>0.084335</td>
+<td>0.077021</td>
+<td>0.050008</td>
+<td>0.065065</td>
+<td>0.047315</td>
+<td>0.034443</td>
+<td>0.025273</td>
+<td>0.022954</td>
+<td>0.041188</td>
+<td>0.027463</td>
+<td>0.057164</td>
+<td>0.036142</td>
+<td>0.048622</td>
+<td>0.023223</td>
+<td>0.019486</td>
+<td>0.040813</td>
+<td>0.038318</td>
+<td>0.045951</td>
+<td>0.044914</td>
+<td>0.083225</td>
+<td>0.036573</td>
+<td>0.037518</td>
+<td>0.022715</td>
+<td>0.029867</td>
+<td>0.036701</td>
+<td>0.049416</td>
+<td>0.031456</td>
+<td>0.036215</td>
+<td>0.042563</td>
+<td>0.091499</td>
+<td>0.083831</td>
+<td>0.036325</td>
+<td>0.029434</td>
+<td>0.029243</td>
+<td>0.033266</td>
+<td>0.036495</td>
+<td>0.024849</td>
+<td>0.025063</td>
+<td>0.034100</td>
+<td>0.032383</td>
+<td>0.042886</td>
+<td>0.029725</td>
+<td>0.037479</td>
+<td>0.043795</td>
+<td>0.029674</td>
+<td>0.048883</td>
+<td>0.063765</td>
+<td>0.093569</td>
+<td>0.033577</td>
+<td>0.039036</td>
+<td>0.042169</td>
+<td>0.039494</td>
+<td>0.067533</td>
+<td>0.063865</td>
+<td>0.079716</td>
+<td>0.041778</td>
+<td>0.041596</td>
+<td>0.034564</td>
+<td>0.059608</td>
+<td>0.031858</td>
+<td>0.030933</td>
+<td>0.041257</td>
+<td>0.046932</td>
+<td>0.060865</td>
+<td>0.030918</td>
+<td>0.042661</td>
+<td>0.036810</td>
+<td>0.046814</td>
+<td>0.037225</td>
+<td>0.052091</td>
+<td>0.068956</td>
+<td>0.031620</td>
+<td>0.033985</td>
+<td>0.035322</td>
+<td>0.034865</td>
+<td>0.050751</td>
+<td>0.044158</td>
+<td>0.064431</td>
+<td>0.052995</td>
+<td>0.050392</td>
+<td>0.041937</td>
+<td>0.034362</td>
+<td>0.037274</td>
+<td>0.033597</td>
+<td>0.037413</td>
+<td>0.031098</td>
+<td>0.038037</td>
+<td>0.026956</td>
+<td>0.040720</td>
+<td>0.037006</td>
+<td>0.046596</td>
+<td>0.044965</td>
+<td>0.066581</td>
+<td>0.067287</td>
+<td>0.042255</td>
+<td>0.039186</td>
+<td>0.039640</td>
+<td>0.042475</td>
+<td>0.052884</td>
+<td>0.046734</td>
+<td>0.049610</td>
+<td>0.477542</td>
+<td>0.522458</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">TSSK3</td>
+<td>0.058653</td>
+<td>0.025380</td>
+<td>0.066570</td>
+<td>0.056317</td>
+<td>0.037207</td>
+<td>0.036167</td>
+<td>0.080225</td>
+<td>0.075408</td>
+<td>0.115814</td>
+<td>0.049548</td>
+<td>0.037163</td>
+<td>0.036261</td>
+<td>0.024276</td>
+<td>0.026531</td>
+<td>0.046915</td>
+<td>0.083276</td>
+<td>0.037862</td>
+<td>0.020326</td>
+<td>0.007830</td>
+<td>0.007382</td>
+<td>0.021717</td>
+<td>0.022070</td>
+<td>0.027101</td>
+<td>0.027753</td>
+<td>0.058953</td>
+<td>0.062683</td>
+<td>0.042829</td>
+<td>0.038773</td>
+<td>0.036912</td>
+<td>0.039729</td>
+<td>0.030383</td>
+<td>0.037500</td>
+<td>0.049506</td>
+<td>0.021706</td>
+<td>0.032364</td>
+<td>0.026124</td>
+<td>0.056058</td>
+<td>0.116581</td>
+<td>0.107571</td>
+<td>0.041487</td>
+<td>0.037895</td>
+<td>0.022279</td>
+<td>0.037350</td>
+<td>0.029320</td>
+<td>0.030523</td>
+<td>0.015721</td>
+<td>0.057714</td>
+<td>0.044055</td>
+<td>0.054457</td>
+<td>0.034306</td>
+<td>0.030038</td>
+<td>0.031732</td>
+<td>0.027433</td>
+<td>0.024502</td>
+<td>0.018529</td>
+<td>0.024557</td>
+<td>0.014175</td>
+<td>0.025756</td>
+<td>0.019820</td>
+<td>0.051878</td>
+<td>0.128521</td>
+<td>0.239667</td>
+<td>0.041065</td>
+<td>0.032839</td>
+<td>0.008127</td>
+<td>0.015395</td>
+<td>0.027027</td>
+<td>0.027420</td>
+<td>0.020989</td>
+<td>0.018026</td>
+<td>0.039466</td>
+<td>0.090171</td>
+<td>0.075016</td>
+<td>0.036252</td>
+<td>0.037163</td>
+<td>0.065410</td>
+<td>0.035393</td>
+<td>0.020649</td>
+<td>0.030855</td>
+<td>0.031480</td>
+<td>0.036507</td>
+<td>0.026200</td>
+<td>0.050527</td>
+<td>0.126116</td>
+<td>0.125357</td>
+<td>0.054350</td>
+<td>0.047741</td>
+<td>0.002026</td>
+<td>0.007067</td>
+<td>0.012767</td>
+<td>0.014999</td>
+<td>0.016464</td>
+<td>0.090926</td>
+<td>0.052566</td>
+<td>0.058482</td>
+<td>0.030202</td>
+<td>0.041133</td>
+<td>0.039203</td>
+<td>0.029094</td>
+<td>0.021753</td>
+<td>0.033467</td>
+<td>0.040912</td>
+<td>0.024244</td>
+<td>0.038699</td>
+<td>0.025500</td>
+<td>0.045168</td>
+<td>0.103450</td>
+<td>0.108203</td>
+<td>0.062956</td>
+<td>0.048850</td>
+<td>0.023629</td>
+<td>0.027969</td>
+<td>0.013680</td>
+<td>0.014419</td>
+<td>0.025493</td>
+<td>0.007954</td>
+<td>0.025397</td>
+<td>0.036891</td>
+<td>0.053578</td>
+<td>0.041111</td>
+<td>0.040525</td>
+<td>0.037977</td>
+<td>0.026780</td>
+<td>0.040914</td>
+<td>0.059131</td>
+<td>0.048805</td>
+<td>0.051981</td>
+<td>0.040530</td>
+<td>0.049537</td>
+<td>0.059025</td>
+<td>0.078777</td>
+<td>0.070291</td>
+<td>0.056160</td>
+<td>0.028709</td>
+<td>0.035887</td>
+<td>0.040605</td>
+<td>0.042591</td>
+<td>0.026845</td>
+<td>0.022039</td>
+<td>0.027035</td>
+<td>0.042073</td>
+<td>0.043381</td>
+<td>0.040552</td>
+<td>0.040987</td>
+<td>0.054155</td>
+<td>0.066387</td>
+<td>0.063583</td>
+<td>0.059575</td>
+<td>0.052021</td>
+<td>0.068460</td>
+<td>0.054099</td>
+<td>0.129755</td>
+<td>0.020011</td>
+<td>0.036822</td>
+<td>0.042941</td>
+<td>0.037583</td>
+<td>0.009656</td>
+<td>0.017845</td>
+<td>0.027976</td>
+<td>0.026101</td>
+<td>0.016962</td>
+<td>0.018217</td>
+<td>0.029149</td>
+<td>0.036300</td>
+<td>0.065432</td>
+<td>0.043473</td>
+<td>0.042880</td>
+<td>0.025155</td>
+<td>0.023838</td>
+<td>0.032150</td>
+<td>0.039964</td>
+<td>0.055690</td>
+<td>0.043721</td>
+<td>0.075102</td>
+<td>0.076906</td>
+<td>0.045870</td>
+<td>0.051201</td>
+<td>0.045220</td>
+<td>0.091284</td>
+<td>0.078466</td>
+<td>0.034623</td>
+<td>0.011269</td>
+<td>0.010538</td>
+<td>0.023553</td>
+<td>0.032837</td>
+<td>0.030686</td>
+<td>0.030414</td>
+<td>0.041301</td>
+<td>0.033481</td>
+<td>0.034361</td>
+<td>0.063916</td>
+<td>0.108155</td>
+<td>0.139418</td>
+<td>0.086923</td>
+<td>0.071254</td>
+<td>0.028400</td>
+<td>0.035041</td>
+<td>0.036489</td>
+<td>0.034246</td>
+<td>0.030458</td>
+<td>0.034184</td>
+<td>0.036234</td>
+<td>0.026309</td>
+<td>0.018402</td>
+<td>0.015990</td>
+<td>0.015742</td>
+<td>0.015759</td>
+<td>0.620700</td>
+<td>0.379300</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">TSSK4</td>
+<td>0.052728</td>
+<td>0.027791</td>
+<td>0.059114</td>
+<td>0.053775</td>
+<td>0.036460</td>
+<td>0.036364</td>
+<td>0.077692</td>
+<td>0.076985</td>
+<td>0.115165</td>
+<td>0.056947</td>
+<td>0.044673</td>
+<td>0.036815</td>
+<td>0.035141</td>
+<td>0.033569</td>
+<td>0.040793</td>
+<td>0.060000</td>
+<td>0.034332</td>
+<td>0.024112</td>
+<td>0.013683</td>
+<td>0.011410</td>
+<td>0.022643</td>
+<td>0.021738</td>
+<td>0.028070</td>
+<td>0.029160</td>
+<td>0.058073</td>
+<td>0.059669</td>
+<td>0.042281</td>
+<td>0.039931</td>
+<td>0.039793</td>
+<td>0.040242</td>
+<td>0.034511</td>
+<td>0.042144</td>
+<td>0.051907</td>
+<td>0.027392</td>
+<td>0.036469</td>
+<td>0.032939</td>
+<td>0.054183</td>
+<td>0.099418</td>
+<td>0.088901</td>
+<td>0.040957</td>
+<td>0.040556</td>
+<td>0.024174</td>
+<td>0.039583</td>
+<td>0.028542</td>
+<td>0.031062</td>
+<td>0.018114</td>
+<td>0.057667</td>
+<td>0.046000</td>
+<td>0.050294</td>
+<td>0.032826</td>
+<td>0.034368</td>
+<td>0.035929</td>
+<td>0.028808</td>
+<td>0.023344</td>
+<td>0.025414</td>
+<td>0.033727</td>
+<td>0.021281</td>
+<td>0.030275</td>
+<td>0.027176</td>
+<td>0.057613</td>
+<td>0.111045</td>
+<td>0.189078</td>
+<td>0.041813</td>
+<td>0.038692</td>
+<td>0.014025</td>
+<td>0.023164</td>
+<td>0.027983</td>
+<td>0.028601</td>
+<td>0.020876</td>
+<td>0.024183</td>
+<td>0.046774</td>
+<td>0.083527</td>
+<td>0.070331</td>
+<td>0.041056</td>
+<td>0.042470</td>
+<td>0.060570</td>
+<td>0.036528</td>
+<td>0.023113</td>
+<td>0.034264</td>
+<td>0.039010</td>
+<td>0.037698</td>
+<td>0.034880</td>
+<td>0.049172</td>
+<td>0.099556</td>
+<td>0.077305</td>
+<td>0.056535</td>
+<td>0.060101</td>
+<td>0.017323</td>
+<td>0.018576</td>
+<td>0.014551</td>
+<td>0.015900</td>
+<td>0.016576</td>
+<td>0.081065</td>
+<td>0.061904</td>
+<td>0.055609</td>
+<td>0.032369</td>
+<td>0.042901</td>
+<td>0.040985</td>
+<td>0.030295</td>
+<td>0.024896</td>
+<td>0.035281</td>
+<td>0.045901</td>
+<td>0.028236</td>
+<td>0.039934</td>
+<td>0.028533</td>
+<td>0.046500</td>
+<td>0.093109</td>
+<td>0.093223</td>
+<td>0.060791</td>
+<td>0.049695</td>
+<td>0.026890</td>
+<td>0.026179</td>
+<td>0.013563</td>
+<td>0.014949</td>
+<td>0.027192</td>
+<td>0.000000</td>
+<td>0.029969</td>
+<td>0.039070</td>
+<td>0.047886</td>
+<td>0.041985</td>
+<td>0.042070</td>
+<td>0.039563</td>
+<td>0.033557</td>
+<td>0.043256</td>
+<td>0.065946</td>
+<td>0.066799</td>
+<td>0.055416</td>
+<td>0.044437</td>
+<td>0.049172</td>
+<td>0.053947</td>
+<td>0.070393</td>
+<td>0.067609</td>
+<td>0.050689</td>
+<td>0.026755</td>
+<td>0.032607</td>
+<td>0.034816</td>
+<td>0.035600</td>
+<td>0.028457</td>
+<td>0.022125</td>
+<td>0.030072</td>
+<td>0.043746</td>
+<td>0.043979</td>
+<td>0.040514</td>
+<td>0.040628</td>
+<td>0.056415</td>
+<td>0.067637</td>
+<td>0.062479</td>
+<td>0.057405</td>
+<td>0.055342</td>
+<td>0.068655</td>
+<td>0.059069</td>
+<td>0.107542</td>
+<td>0.016290</td>
+<td>0.023216</td>
+<td>0.039592</td>
+<td>0.036376</td>
+<td>0.014476</td>
+<td>0.020323</td>
+<td>0.026238</td>
+<td>0.026215</td>
+<td>0.041665</td>
+<td>0.016244</td>
+<td>0.031620</td>
+<td>0.036699</td>
+<td>0.057738</td>
+<td>0.041766</td>
+<td>0.042658</td>
+<td>0.029229</td>
+<td>0.029311</td>
+<td>0.036618</td>
+<td>0.042735</td>
+<td>0.057426</td>
+<td>0.047430</td>
+<td>0.085156</td>
+<td>0.070591</td>
+<td>0.038712</td>
+<td>0.042855</td>
+<td>0.043761</td>
+<td>0.083382</td>
+<td>0.072574</td>
+<td>0.035593</td>
+<td>0.014580</td>
+<td>0.016641</td>
+<td>0.026681</td>
+<td>0.035851</td>
+<td>0.033285</td>
+<td>0.033330</td>
+<td>0.041113</td>
+<td>0.036743</td>
+<td>0.036320</td>
+<td>0.058757</td>
+<td>0.093853</td>
+<td>0.119285</td>
+<td>0.082519</td>
+<td>0.066321</td>
+<td>0.029773</td>
+<td>0.036372</td>
+<td>0.037973</td>
+<td>0.033146</td>
+<td>0.029864</td>
+<td>0.035657</td>
+<td>0.038069</td>
+<td>0.030552</td>
+<td>0.023436</td>
+<td>0.021363</td>
+<td>0.022620</td>
+<td>0.023797</td>
+<td>0.569166</td>
+<td>0.358863</td>
+<td>0.071971</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">WEE2</td>
+<td>0.043967</td>
+<td>0.075610</td>
+<td>0.066270</td>
+<td>0.022744</td>
+<td>0.035380</td>
+<td>0.016544</td>
+<td>0.036876</td>
+<td>0.052500</td>
+<td>0.080799</td>
+<td>0.022085</td>
+<td>0.026341</td>
+<td>0.022279</td>
+<td>0.018525</td>
+<td>0.029408</td>
+<td>0.080315</td>
+<td>0.075319</td>
+<td>0.040636</td>
+<td>0.042321</td>
+<td>0.066750</td>
+<td>0.054230</td>
+<td>0.031021</td>
+<td>0.028095</td>
+<td>0.031986</td>
+<td>0.042869</td>
+<td>0.086758</td>
+<td>0.045162</td>
+<td>0.023713</td>
+<td>0.029243</td>
+<td>0.023958</td>
+<td>0.034570</td>
+<td>0.044249</td>
+<td>0.072020</td>
+<td>0.026170</td>
+<td>0.025481</td>
+<td>0.016079</td>
+<td>0.021329</td>
+<td>0.033396</td>
+<td>0.069211</td>
+<td>0.068525</td>
+<td>0.040078</td>
+<td>0.039380</td>
+<td>0.075558</td>
+<td>0.068705</td>
+<td>0.072290</td>
+<td>0.029349</td>
+<td>0.011905</td>
+<td>0.059183</td>
+<td>0.091238</td>
+<td>0.078219</td>
+<td>0.017050</td>
+<td>0.016508</td>
+<td>0.009258</td>
+<td>0.038960</td>
+<td>0.035152</td>
+<td>0.043076</td>
+<td>0.017049</td>
+<td>0.023477</td>
+<td>0.012678</td>
+<td>0.008085</td>
+<td>0.031861</td>
+<td>0.073281</td>
+<td>0.069517</td>
+<td>0.038651</td>
+<td>0.039370</td>
+<td>0.049084</td>
+<td>0.080480</td>
+<td>0.093174</td>
+<td>0.052211</td>
+<td>0.022438</td>
+<td>0.034737</td>
+<td>0.097239</td>
+<td>0.050473</td>
+<td>0.034056</td>
+<td>0.019104</td>
+<td>0.006526</td>
+<td>0.032920</td>
+<td>0.023955</td>
+<td>0.032882</td>
+<td>0.018267</td>
+<td>0.015706</td>
+<td>0.004761</td>
+<td>0.002667</td>
+<td>0.014464</td>
+<td>0.033755</td>
+<td>0.042027</td>
+<td>0.044284</td>
+<td>0.070194</td>
+<td>0.132836</td>
+<td>0.134048</td>
+<td>0.094661</td>
+<td>0.049406</td>
+<td>0.011032</td>
+<td>0.044062</td>
+<td>0.078456</td>
+<td>0.059391</td>
+<td>0.017279</td>
+<td>0.017465</td>
+<td>0.015591</td>
+<td>0.060694</td>
+<td>0.036641</td>
+<td>0.082583</td>
+<td>0.026307</td>
+<td>0.035697</td>
+<td>0.025075</td>
+<td>0.007191</td>
+<td>0.046183</td>
+<td>0.060556</td>
+<td>0.081128</td>
+<td>0.044798</td>
+<td>0.053526</td>
+<td>0.052816</td>
+<td>0.048690</td>
+<td>0.039354</td>
+<td>0.019848</td>
+<td>0.046669</td>
+<td>0.000000</td>
+<td>0.146733</td>
+<td>0.039054</td>
+<td>0.036102</td>
+<td>0.016717</td>
+<td>0.011760</td>
+<td>0.066982</td>
+<td>0.074497</td>
+<td>0.036724</td>
+<td>0.037622</td>
+<td>0.039006</td>
+<td>0.012272</td>
+<td>0.015387</td>
+<td>0.014001</td>
+<td>0.084789</td>
+<td>0.098231</td>
+<td>0.032632</td>
+<td>0.037891</td>
+<td>0.037673</td>
+<td>0.067815</td>
+<td>0.036568</td>
+<td>0.030217</td>
+<td>0.027327</td>
+<td>0.033869</td>
+<td>0.071613</td>
+<td>0.071329</td>
+<td>0.029926</td>
+<td>0.017721</td>
+<td>0.018773</td>
+<td>0.066162</td>
+<td>0.044255</td>
+<td>0.054582</td>
+<td>0.025666</td>
+<td>0.031754</td>
+<td>0.032632</td>
+<td>0.026301</td>
+<td>0.045391</td>
+<td>0.075666</td>
+<td>0.104309</td>
+<td>0.027431</td>
+<td>0.069056</td>
+<td>0.036004</td>
+<td>0.032605</td>
+<td>0.043191</td>
+<td>0.033639</td>
+<td>0.008123</td>
+<td>0.070788</td>
+<td>0.083901</td>
+<td>0.044681</td>
+<td>0.017935</td>
+<td>0.017282</td>
+<td>0.013780</td>
+<td>0.060448</td>
+<td>0.045041</td>
+<td>0.094324</td>
+<td>0.019183</td>
+<td>0.050876</td>
+<td>0.021346</td>
+<td>0.027009</td>
+<td>0.040054</td>
+<td>0.071068</td>
+<td>0.109179</td>
+<td>0.034782</td>
+<td>0.036738</td>
+<td>0.046085</td>
+<td>0.034930</td>
+<td>0.030356</td>
+<td>0.018590</td>
+<td>0.011623</td>
+<td>0.053925</td>
+<td>0.082393</td>
+<td>0.064062</td>
+<td>0.013706</td>
+<td>0.022838</td>
+<td>0.018505</td>
+<td>0.049247</td>
+<td>0.036580</td>
+<td>0.056739</td>
+<td>0.016486</td>
+<td>0.034869</td>
+<td>0.018795</td>
+<td>0.033647</td>
+<td>0.030841</td>
+<td>0.094766</td>
+<td>0.096597</td>
+<td>0.040385</td>
+<td>0.036239</td>
+<td>0.040689</td>
+<td>0.067024</td>
+<td>0.036481</td>
+<td>0.036286</td>
+<td>0.018901</td>
+<td>0.345801</td>
+<td>0.372509</td>
+<td>0.281690</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">STK32A</td>
+<td>0.042088</td>
+<td>0.048958</td>
+<td>0.043909</td>
+<td>0.042148</td>
+<td>0.039149</td>
+<td>0.039619</td>
+<td>0.035109</td>
+<td>0.038230</td>
+<td>0.032561</td>
+<td>0.036990</td>
+<td>0.039822</td>
+<td>0.044389</td>
+<td>0.042409</td>
+<td>0.046752</td>
+<td>0.047287</td>
+<td>0.052673</td>
+<td>0.036711</td>
+<td>0.042259</td>
+<td>0.042804</td>
+<td>0.037494</td>
+<td>0.053057</td>
+<td>0.054500</td>
+<td>0.061083</td>
+<td>0.043605</td>
+<td>0.046288</td>
+<td>0.041353</td>
+<td>0.039434</td>
+<td>0.041191</td>
+<td>0.038272</td>
+<td>0.034217</td>
+<td>0.032662</td>
+<td>0.035199</td>
+<td>0.036823</td>
+<td>0.036835</td>
+<td>0.036977</td>
+<td>0.041268</td>
+<td>0.038293</td>
+<td>0.041026</td>
+<td>0.045493</td>
+<td>0.035155</td>
+<td>0.038190</td>
+<td>0.041974</td>
+<td>0.047614</td>
+<td>0.074720</td>
+<td>0.074024</td>
+<td>0.059386</td>
+<td>0.035833</td>
+<td>0.030871</td>
+<td>0.032162</td>
+<td>0.035356</td>
+<td>0.031169</td>
+<td>0.031806</td>
+<td>0.030441</td>
+<td>0.029950</td>
+<td>0.027791</td>
+<td>0.030205</td>
+<td>0.030785</td>
+<td>0.033947</td>
+<td>0.029999</td>
+<td>0.032071</td>
+<td>0.025611</td>
+<td>0.061684</td>
+<td>0.030103</td>
+<td>0.029443</td>
+<td>0.036652</td>
+<td>0.047217</td>
+<td>0.130831</td>
+<td>0.130034</td>
+<td>0.066041</td>
+<td>0.044565</td>
+<td>0.034198</td>
+<td>0.034086</td>
+<td>0.043920</td>
+<td>0.036184</td>
+<td>0.036320</td>
+<td>0.031351</td>
+<td>0.032022</td>
+<td>0.051327</td>
+<td>0.039138</td>
+<td>0.049859</td>
+<td>0.041268</td>
+<td>0.038005</td>
+<td>0.034934</td>
+<td>0.027656</td>
+<td>0.030420</td>
+<td>0.035404</td>
+<td>0.036394</td>
+<td>0.026301</td>
+<td>0.031036</td>
+<td>0.059159</td>
+<td>0.060801</td>
+<td>0.145654</td>
+<td>0.056115</td>
+<td>0.048990</td>
+<td>0.038302</td>
+<td>0.038636</td>
+<td>0.041204</td>
+<td>0.040568</td>
+<td>0.039856</td>
+<td>0.036125</td>
+<td>0.040662</td>
+<td>0.047873</td>
+<td>0.043651</td>
+<td>0.048880</td>
+<td>0.036103</td>
+<td>0.041382</td>
+<td>0.052906</td>
+<td>0.064304</td>
+<td>0.043274</td>
+<td>0.038753</td>
+<td>0.027183</td>
+<td>0.032817</td>
+<td>0.044028</td>
+<td>0.043816</td>
+<td>0.054571</td>
+<td>0.021531</td>
+<td>0.028537</td>
+<td>0.028373</td>
+<td>0.038668</td>
+<td>0.039189</td>
+<td>0.038405</td>
+<td>0.051296</td>
+<td>0.062902</td>
+<td>0.043929</td>
+<td>0.062803</td>
+<td>0.089980</td>
+<td>0.043558</td>
+<td>0.040010</td>
+<td>0.032584</td>
+<td>0.033808</td>
+<td>0.046026</td>
+<td>0.037831</td>
+<td>0.022418</td>
+<td>0.015478</td>
+<td>0.028611</td>
+<td>0.060652</td>
+<td>0.061338</td>
+<td>0.072072</td>
+<td>0.017621</td>
+<td>0.021457</td>
+<td>0.030677</td>
+<td>0.031442</td>
+<td>0.026585</td>
+<td>0.026038</td>
+<td>0.034290</td>
+<td>0.034485</td>
+<td>0.026500</td>
+<td>0.030659</td>
+<td>0.036728</td>
+<td>0.043694</td>
+<td>0.044186</td>
+<td>0.027152</td>
+<td>0.015201</td>
+<td>0.015454</td>
+<td>0.021167</td>
+<td>0.018053</td>
+<td>0.028275</td>
+<td>0.029752</td>
+<td>0.037259</td>
+<td>0.037739</td>
+<td>0.365584</td>
+<td>0.021352</td>
+<td>0.031640</td>
+<td>0.033771</td>
+<td>0.040891</td>
+<td>0.036303</td>
+<td>0.037887</td>
+<td>0.042047</td>
+<td>0.044009</td>
+<td>0.039734</td>
+<td>0.039842</td>
+<td>0.044166</td>
+<td>0.043477</td>
+<td>0.052977</td>
+<td>0.039275</td>
+<td>0.026209</td>
+<td>0.031257</td>
+<td>0.031869</td>
+<td>0.031070</td>
+<td>0.037814</td>
+<td>0.042506</td>
+<td>0.068686</td>
+<td>0.068696</td>
+<td>0.114522</td>
+<td>0.041301</td>
+<td>0.035156</td>
+<td>0.037080</td>
+<td>0.032705</td>
+<td>0.037500</td>
+<td>0.037323</td>
+<td>0.034375</td>
+<td>0.033726</td>
+<td>0.033730</td>
+<td>0.034566</td>
+<td>0.032953</td>
+<td>0.034890</td>
+<td>0.040020</td>
+<td>0.036438</td>
+<td>0.036881</td>
+<td>0.041973</td>
+<td>0.034480</td>
+<td>0.033865</td>
+<td>0.035673</td>
+<td>0.040218</td>
+<td>0.061115</td>
+<td>0.061496</td>
+<td>0.152536</td>
+<td>0.488526</td>
+<td>0.511474</td>
+<td>0.000000</td>
+</tr>
+</tbody>
+</table>
+
+<p>65 rows × 210 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-predicted-pssms" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-predicted-pssms">Visualize predicted PSSMs</h2>
+<div id="1f18f598-14f3-4e8b-b989-548f91040f11" class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i,r <span class="kw">in</span> selected_df.iterrows():</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>r<span class="sc">.</span>family<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>r<span class="sc">.</span>Pearson_family<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> r.kinase</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    matrix <span class="op">=</span> get_one_kinase(preds_final,k,drop_s<span class="op">=</span><span class="va">False</span>).T</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    get_logo2(matrix, k)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    plt.close()</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    get_heatmap(preds_final.iloc[:,:<span class="op">-</span><span class="dv">3</span>],k)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>    plt.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>STKR:0.8578397866239376</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>STKR:0.8578397866239376</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-6.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDK:0.9232645242649458</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-8.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-9.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDKL:0.76311665060942</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-11.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-12.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDKL:0.76311665060942</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-14.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-15.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDKL:0.76311665060942</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-17.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-18.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DCAMKL:0.9019845007257056</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-20.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-21.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DMPK:0.9546690741027648</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-23.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-24.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DAPK:0.7920828111362217</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-26.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-27.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MAPK:0.8818759660317733</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-29.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-30.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MAPK:0.8818759660317733</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-32.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-33.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MLK:0.7337835153843144</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-35.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-36.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MLK:0.7337835153843144</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-38.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-39.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>STE11:0.7499031572306992</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-41.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-42.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>STKR:0.8578397866239376</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-44.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-45.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NEK:0.7782348100131159</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-47.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-48.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>STE20:0.8639317629980943</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-50.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-51.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PDHK:0.6766899079964322</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-53.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-54.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDK:0.9232645242649458</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-56.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-57.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CDK:0.9232645242649458</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-59.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-60.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NKF1:0.7342624924789267</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-62.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-63.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NKF1:0.7342624924789267</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-65.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-66.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>RIPK:0.62712483511819</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-68.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-69.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>LISK:0.5764010061153408</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-71.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-72.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TSSK:0.8477050673723502</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-74.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-75.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TSSK:0.8477050673723502</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-77.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-78.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>YANK:0.8166840920260132</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-80.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09d_ML_predict_files/figure-html/cell-46-output-81.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="save-images" class="level2">
+<h2 class="anchored" data-anchor-id="save-images">Save images</h2>
+<p>Create folder: predict/logo, predict/heatmap, predict/combine</p>
+<div id="fc947b50-e0ef-41b6-8c08-4106152ea2e8" class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># !mkdir predict</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="co"># !mkdir predict/logo</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a><span class="co"># !mkdir predict/heatmap</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="co"># !mkdir predict/combine</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c24217bc-2120-451c-9d3f-9caf3fa32382" class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># clear contents in the folder</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="co"># !rm -r predict/logo/*</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="co"># !rm -r predict/heatmap/*</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a><span class="co"># !rm -r predict/combine/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="db9dff55-3d61-405c-b810-8e02e5c24d19" class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for i,r in selected.iterrows():</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(f'{r.family}:{r.Pearson_family}')</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     k = r.kinase</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     matrix = get_one_kinase(preds_final,k,drop_s=False).T</span></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     get_logo2(matrix, k)</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.savefig(f'predict/logo/{k}.png',bbox_inches='tight', pad_inches=0.3) #0.3</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.close()</span></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     get_heatmap(preds_final.iloc[:,:-3],k,figsize=(7.5,10))</span></span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.savefig(f'predict/heatmap/{k}.png',bbox_inches='tight', pad_inches=0)</span></span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.close()</span></span>
+<span id="cb80-14"><a href="#cb80-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb80-15"><a href="#cb80-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     # break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="save-and-combine-images-for-pdf" class="level2">
+<h2 class="anchored" data-anchor-id="save-and-combine-images-for-pdf">Save and combine images for pdf</h2>
+<div id="439d8a12-db44-4105-8bf8-6e79fffeba4d" class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> combine_images_vertically(image_paths, output_path):</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>    images <span class="op">=</span> [Image.<span class="bu">open</span>(image_path).convert(<span class="st">'RGBA'</span>) <span class="cf">for</span> image_path <span class="kw">in</span> image_paths]</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>    total_width <span class="op">=</span> <span class="bu">max</span>(image.width <span class="cf">for</span> image <span class="kw">in</span> images)</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    total_height <span class="op">=</span> <span class="bu">sum</span>(image.height <span class="cf">for</span> image <span class="kw">in</span> images)</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>    combined_image <span class="op">=</span> Image.new(<span class="st">'RGBA'</span>, (total_width, total_height))</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>    y_offset <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> image <span class="kw">in</span> images:</span>
+<span id="cb81-11"><a href="#cb81-11" aria-hidden="true" tabindex="-1"></a>        combined_image.paste(image, (<span class="dv">0</span>, y_offset), image)</span>
+<span id="cb81-12"><a href="#cb81-12" aria-hidden="true" tabindex="-1"></a>        y_offset <span class="op">+=</span> image.height</span>
+<span id="cb81-13"><a href="#cb81-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-14"><a href="#cb81-14" aria-hidden="true" tabindex="-1"></a>    combined_image.save(output_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1cc9111b-16b8-4962-a684-6ee65e22eac2" class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># folders = ["predict/logo", "predict/heatmap"]</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a><span class="co"># for i,r in tqdm(selected.iterrows(),total=len(selected)):</span></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     k = r.kinase</span></span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     filename = f"{k}.png"</span></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     image_paths = [os.path.join(folder, filename) for folder in folders]</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     output_path = f"predict/combine/{k}.png"</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     combine_images_vertically(image_paths, output_path)</span></span>
+<span id="cb82-11"><a href="#cb82-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     # break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5c26c8eb-b1b4-4536-ba2e-38feb0504c70" class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># !zip -rq predict.zip predict/combine/*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/sky1ove\.github\.io\/katlas_raw");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sky1ove/katlas_raw/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
