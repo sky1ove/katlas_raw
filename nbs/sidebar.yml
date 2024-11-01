@@ -2,7 +2,7 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 01a_Preprocessing_LS.ipynb
+      - 01a_Preprocess_LS.ipynb
       - 01b_Combine_Datasets.ipynb
       - 02_Specificity.ipynb
       - 03a_Compare_PSP_LS.ipynb
@@ -13,7 +13,7 @@ website:
       - 05_Hierarchical_clustering.ipynb
       - 06_AA_feature.ipynb
       - 07a_Combine_psp_ochoa.ipynb
-      - 07b_Plot_distribution.ipynb
+      - 07b_Reactome_path.ipynb
       - 07c_Enrichment_ATM.ipynb
       - 08_AUCDF.ipynb
       - 09a_ML_embedding.ipynb
